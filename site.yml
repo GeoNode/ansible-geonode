@@ -5,7 +5,7 @@
   remote_user: ubuntu
   tasks:
   - name: ensure nginx is at the latest version
-    apt: pkg=nginx state=latest
+    apt: pkg=nginx state=latest update_cache=yes
     become: yes
     become_method: sudo
   - name: ensure nginx is running (and enable it at boot)
