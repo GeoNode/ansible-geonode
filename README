@@ -1,0 +1,11 @@
+In order to use this script, first export the AWS credentials enviroment variables, then add the correct .pem file to your ssh agent and call the ansible-playbook on the site.yml file.
+
+```
+export AWS_ACCESS_KEY_ID='XXX'
+export AWS_SECRET_ACCESS_KEY='XXX'
+
+ssh-agent bash
+ssh-add ~/.ssh/keypair.pem
+
+ansible-playbook site.yml
+```
