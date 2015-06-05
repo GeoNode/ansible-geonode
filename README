@@ -9,3 +9,5 @@ ssh-add ~/.ssh/keypair.pem
 
 ansible-playbook site.yml
 ```
+
+This playbook will recognize the right ubuntu hosts because they are tagged with role=webservers or role=dbservers through the AWS interface.
