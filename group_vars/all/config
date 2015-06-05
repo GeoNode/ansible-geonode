@@ -1,0 +1,13 @@
+db_instance: postgres
+db_name: geonode
+db_user: worldmap
+region: us-east-1
+db_engine: postgres
+instance_type: db.t2.micro
+multi_zone: yes
+publicly_accessible: yes
+size: 500
+maint_window: mon:05:00-mon:06:00
+backup_retention: 35
+backup_window: 07:00-07:30
+license_model: license-included
