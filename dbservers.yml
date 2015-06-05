@@ -30,7 +30,8 @@
         module: rds
         command: facts
         instance_name: "{{ db_instance }}"
-        register: postgres_facts
+        region: "{{ db_region }}"
+      register: postgres_facts
 
     - name: Ensure postgresql postgis extension is created
       shell: "PGPASSWORD='{{db_password}}' psql -h {{db_host}} -d {{db_name}} -U {{db_user}}  -c 'CREATE EXTENSION postgis;'"
