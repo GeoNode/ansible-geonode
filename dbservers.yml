@@ -1,0 +1,41 @@
+- hosts: localhost
+  connection: local
+
+  tasks:
+    - name: Create multi-zone Postgres on RDS
+      local_action:
+        module: rds
+        command: create
+        instance_name: postgres
+        region: us-east-1
+        db_engine: postgres
+        size: 10
+        instance_type: db.t2.micro
+        multi_zone: yes
+        publicly_accessible: yes
+        size: 500
+        maint_window: mon:05:00-mon:06:00
+        backup_retention: 35
+        backup_window: 07:00-07:30
+        license_model: license-included
+        db_name: geonode
+        username: worldmap
+        password: postgis-never-forgets
+        tags:
+          environment: testing
+          application: worldmap
+          owner: ariel
+
+     
+# Delete an instance, but create a snapshot before doing so
+#- rds:
+#    command: delete
+#    instance_name: postgres
+#    snapshot: postgres_snapshot
+#
+#
+# Get facts about an instance
+#- rds:
+#    command: facts
+#    instance_name: postgres
+#    register: postgres_facts
