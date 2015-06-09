@@ -3,8 +3,7 @@
 
   tasks:
     - name: Create multi-zone Postgres on RDS
-      local_action:
-        module: rds
+      rds:
         command: create
         instance_name: "{{ db_instance }}"
         region: "{{ db_region }}"
@@ -17,6 +16,8 @@
         backup_retention: "{{ db_backup_retention }}"
         backup_window: "{{ db_backup_window }}"
         license_model: "{{ db_license_model }}"
+        subnet: "{{ db_vpc_subnet }}"
+        vpc_security_groups: "{{ db_vpc_group }}"
         db_name: "{{ db_name }}"
         username: "{{ db_user }}"
         password: "{{ db_password }}"
@@ -26,12 +27,13 @@
           owner: ariel
 
     - name: Get facts about postgres instance.
-      local_action:
-        module: rds
+      rds:
         command: facts
         instance_name: "{{ db_instance }}"
         region: "{{ db_region }}"
       register: postgres_facts
+
+#    - debug: var=postgres_facts
 
     - name: Ensure postgresql postgis extension is created
       shell: "PGPASSWORD='{{db_password}}' psql -h {{db_host}} -d {{db_name}} -U {{db_user}}  -c 'CREATE EXTENSION postgis;'"
@@ -41,9 +43,9 @@
       changed_when: "psql_result.rc == 0"
 
 
-#      - name: Delete postgres rds instance, but create a snapshot before doing so
-#        local_action:
-#          module: rds
-#          command: delete
-#          instance_name: postgres
-#          snapshot: postgres_snapshot
+#    - name: Delete postgres rds instance, but create a snapshot before doing so
+#      rds:
+#        command: delete
+#        instance_name: "{{ db_instance }}"
+#        region: "{{ db_region }}"
+#        snapshot: postgres_snapshot
