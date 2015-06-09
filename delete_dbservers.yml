@@ -1,0 +1,10 @@
+- hosts: localhost
+  connection: local
+
+  tasks:
+    - name: Delete postgres rds instance, but create a snapshot before doing so
+      rds:
+        command: delete
+        instance_name: "{{ db_instance }}"
+        region: "{{ db_region }}"
+        snapshot: postgres-snapshot
