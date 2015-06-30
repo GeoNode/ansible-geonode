@@ -1,5 +1,5 @@
-db_instance: postgres
-db_name: geonode
+db_data_instance: wmdata
+db_config_instance: worldmap
 db_user: worldmap
 db_region: us-east-1
 db_engine: postgres
