@@ -17,6 +17,9 @@ db_license_model: postgresql-license
 
 # app_name should be a shorthand, lowercase, no spaces version of the
 # application name since this variable will be used as a directory name
+# Also, it would be the name of the branch in the worldmap repo. 
+# For example worldmap, worldmap-legacy, master, feature1.
+# The deployed service will be available at app_name.cga.terranodo.io
 app_name: worldmap
 
 # Django project settings directory, which might be different than your
@@ -33,10 +36,6 @@ code_repository: http://github.com/cga-harvard/cga-worldmap.git
 # name of the user created by the Fabric script that Ansible will use to
 # handle server tasks
 deploy_user: ubuntu
-
-deploy_branches:
-  - master
-  - worldmap
 
 # server directory for the virtualenv that will be created to run the web app
 virtualenv_dir: /home/{{deploy_user}}/venvs/{{app_name}}

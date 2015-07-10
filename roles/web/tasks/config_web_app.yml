@@ -8,7 +8,7 @@
   copy: src=ssh_conf/known_hosts dest={{ssh_dir}}/known_hosts
 
 - name: checkout latest web app code
-  git: repo={{code_repository}} dest={{app_code_dir}}
+  git: repo={{code_repository}} version={{app_name}} dest={{app_code_dir}}
 
 - name: check if virtualenv already exists
   stat: path={{virtualenv_dir}}
@@ -19,8 +19,9 @@
   when: venv_dir.stat.isdir is not defined
 
 - name: install web application dependencies listed in requirements.txt
-  pip: requirements={{requirements_file}}
+  pip: name=file:///{{app_code_dir}}
        virtualenv={{virtualenv_dir}}
+       extra_args='-e'
 
 - name: check if app/static directory exists
   stat: path={{app_code_dir}}/static

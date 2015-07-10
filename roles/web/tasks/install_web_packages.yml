@@ -20,4 +20,17 @@
     - supervisor
     - postgresql-client-common
     - postgresql-client
+    - python-dev
+    - python-imaging
+    - python-lxml
+    - python-pyproj
+    - python-shapely
+    - python-nose
+    - python-httplib2
+    - python-software-properties
+    - gettext
+    - build-essential
+    - libxml2-dev
+    - libxslt1-dev
+    - zlib1g-dev
 
