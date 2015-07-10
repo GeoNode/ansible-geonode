@@ -33,4 +33,11 @@
     - libxml2-dev
     - libxslt1-dev
     - zlib1g-dev
-
+    - gdal-bin
+    - libgeos-dev
+    - libproj-dev
+    - unzip
+    - zip
+    - libjpeg-dev
+    - libpng-dev
+    - libxslt-dev
