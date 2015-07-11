@@ -1,8 +1,18 @@
 [program:{{app_name}}]
 environment={% for k, v in django_env_vars.iteritems() %}{% if not loop.first %},{% endif %}{{ k }}="{{ v }}"{% endfor %}
 
-command={{virtualenv_dir}}/bin/gunicorn {{django_settings_dir_name}}.wsgi:application
-directory={{app_code_dir}}
+command=/usr/bin/uwsgi
+  --socket /tmp/{{ app_name }}.sock
+  --logto /var/log/uwsgi/app/{{ app_name }}.log
+  --home {{ virtualenv_dir }}
+  --pythonpath {{ virtualenv_dir}}
+  --wsgi-file {{ app_code_dir }}/wsgi.py
+  --callable {{django_settings_dir_name}}.wsgi:application
+  --max-requests 1000
+  --master
+  --processes 1
+  --threads=25
+  --chmod
 user={{deploy_user}}
 autostart=true
 autorestart=true
