@@ -25,6 +25,7 @@
     - python-lxml
     - python-pyproj
     - python-shapely
+    - python-gdal
     - python-nose
     - python-httplib2
     - python-software-properties

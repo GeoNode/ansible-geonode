@@ -15,7 +15,7 @@
   register: venv_dir
 
 - name: create virtualenv for Django web application
-  shell: virtualenv {{virtualenv_dir}}
+  shell: virtualenv --system-site-packages {{virtualenv_dir}}
   when: venv_dir.stat.isdir is not defined
 
 - name: install web application dependencies listed in requirements.txt
