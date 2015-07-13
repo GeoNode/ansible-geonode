@@ -18,6 +18,7 @@
     - python-virtualenv
     - nginx
     - supervisor
+    - uwsgi
     - postgresql-client-common
     - postgresql-client
     - python-dev

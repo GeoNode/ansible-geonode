@@ -1,12 +1,10 @@
 [program:{{app_name}}]
 environment={% for k, v in django_env_vars.iteritems() %}{% if not loop.first %},{% endif %}{{ k }}="{{ v }}"{% endfor %}
 
-command=/usr/bin/uwsgi
+command=/usr/local/bin/uwsgi
   --socket /tmp/{{ app_name }}.sock
-  --logto /var/log/uwsgi/app/{{ app_name }}.log
-  --home {{ virtualenv_dir }}
-  --pythonpath {{ virtualenv_dir}}
-  --wsgi-file {{ app_code_dir }}/wsgi.py
+  --logto /var/log/uwsgi/{{ app_name }}.log
+  --venv {{ virtualenv_dir }}
   --callable {{django_settings_dir_name}}.wsgi:application
   --max-requests 1000
   --master

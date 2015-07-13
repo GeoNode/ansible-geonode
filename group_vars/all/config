@@ -49,7 +49,7 @@ requirements_file: "{{app_code_dir}}/requirements.txt"
 
 # root domain name the server should run as. do not include a subdomain,
 # for example, txt2react.com
-root_domain_name: terranodo.io
+root_domain_name: "{{ app_name }}.cga.terranodo.io"
 
 # for now, disable SSL (deploying with SSL works but need to update scripts
 # to use it)
