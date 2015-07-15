@@ -1,0 +1,26 @@
+[uwsgi]
+;unix socket (referenced in nginx configuration)
+socket = /tmp/%n.sock
+
+# set mode of created UNIX socket
+chmod-socket = 666
+
+# place timestamps into log
+log-date = true
+
+vacuum = true
+
+; project-level logging to the logs/ folder
+logto = /var/log/nginx/uwsgi-%n.log
+
+chdir = /home/ubuntu/%n
+module= geonode.wsgi:application
+
+;enable-threads = true
+
+virtualenv = /home/ubuntu/venvs/%n
+vacuum = true
+env = DJANGO_SETTINGS_MODULE=geonode.settings
+pidfile = /tmp/worldmap.pid
+;harakiri = 20 # respawn processes taking more than 20 seconds
+max-requests = 5000 # respawn processes after serving 5000 requests

@@ -4,8 +4,8 @@
 #
 ---
 
-- include: install_web_packages.yml
-- include: config_web_server.yml
-- include: config_web_app.yml
-- include: config_supervisor.yml
+- include: nginx.yml
+- include: uwsgi.yml
+- include: django.yml
+#- include: config_supervisor.yml
 

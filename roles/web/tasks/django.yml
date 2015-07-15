@@ -1,11 +1,7 @@
-###
-# updates the APT package cache and install packages necessary for web
-# servers
-#
----
+
 
 - name: ensure apt cache is up to date
-  apt: update_cache=yes 
+  apt: update_cache=yes
   sudo: yes
 
 - name: ensure web server packages are installed
@@ -16,9 +12,6 @@
     - python-dev
     - libpq-dev
     - python-virtualenv
-    - nginx
-    - supervisor
-    - uwsgi
     - postgresql-client-common
     - postgresql-client
     - python-dev

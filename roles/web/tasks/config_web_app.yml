@@ -31,6 +31,8 @@
   command: mkdir {{app_code_dir}}/static
   when: static_dir.stat.isdir is not defined
 
+- file: path=/var/log/uwsgi state=directory mode=0777
+
 - name: Django collectstatic
   django_manage: command=collectstatic
                  app_path={{app_code_dir}}
