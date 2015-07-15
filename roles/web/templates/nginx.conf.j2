@@ -1,7 +1,6 @@
 server {
     listen      80;
     server_name ~^(?P<subdomain>.+)\.cga\.terranodo\.io$;
-    root /var/www/$subdomain;
 
     charset     utf-8;
 
@@ -10,27 +9,12 @@ server {
 
     client_max_body_size 200M;
 
-    location /uploaded  {
-        alias /var/www/$subdomain/uploaded;
-        gzip            on;
-        gzip_min_length 1000;
-        gzip_proxied    expired no-cache no-store private auth;
-        gzip_types      text/plain application/xml;
-        expires 30d;
-        access_log off;
-    }
-
-    location /static {
-        alias /var/www/$subdomain/static;
-        gzip            on;
-        gzip_min_length 1000;
-        gzip_proxied    expired no-cache no-store private auth;
-        gzip_types      text/plain application/xml;
-        expires 30d;
-        access_log off;
-    }
-
     location / {
+        root /var/www/$subdomain;
+        try_files $uri $uri/ @wsgiapp;
+    }
+
+    location @wsgiapp {
         uwsgi_pass  unix:///tmp/$subdomain.sock;
         include     /etc/nginx/uwsgi_params;
     }

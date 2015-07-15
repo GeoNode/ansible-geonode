@@ -47,4 +47,4 @@ requirements_file: "{{app_code_dir}}/requirements.txt"
 site_url: "{{ app_name }}.cga.terranodo.io"
 
 # Server name for nginx.
-server_name: "~^(?P<subdomain>.+)\.cga\.terranodo\.io$"
+server_name: ~^(?P<subdomain>.+)\.cga\.terranodo\.io$
