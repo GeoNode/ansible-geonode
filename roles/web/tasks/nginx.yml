@@ -19,7 +19,3 @@
   sudo: yes
   notify:
     - restart nginx
-
-- name: make sure nginx is running
-  service: name=nginx state=started
-  sudo: yes

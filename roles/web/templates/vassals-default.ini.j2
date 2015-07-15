@@ -13,14 +13,14 @@ vacuum = true
 ; project-level logging to the logs/ folder
 logto = /var/log/nginx/uwsgi-%n.log
 
-chdir = /home/ubuntu/%n
-module= geonode.wsgi:application
+chdir = {{app_code_dir}}/%n
+module= {{main_module}}.wsgi:application
 
 ;enable-threads = true
 
-virtualenv = /home/ubuntu/venvs/%n
+virtualenv = {{virtualenv_dir}}/%n
 vacuum = true
-env = DJANGO_SETTINGS_MODULE=geonode.settings
-pidfile = /tmp/worldmap.pid
+env = DJANGO_SETTINGS_MODULE={{main_module}}.settings
+pidfile = /tmp/%n.pid
 ;harakiri = 20 # respawn processes taking more than 20 seconds
 max-requests = 5000 # respawn processes after serving 5000 requests

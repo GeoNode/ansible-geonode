@@ -20,8 +20,3 @@
   sudo: yes
   notify:
     - restart uwsgi
-
-- name: make sure uwsgi is running
-  service: name=uwsgi state=started
-  sudo: yes
-

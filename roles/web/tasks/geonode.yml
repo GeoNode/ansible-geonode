@@ -3,6 +3,43 @@
 # creates a virtualenv, and collects static assets
 #
 ---
+- name: ensure apt cache is up to date
+  apt: update_cache=yes
+  sudo: yes
+
+- name: ensure web server packages are installed
+  apt: name={{item}}
+  sudo: yes
+  with_items:
+    - git
+    - python-dev
+    - libpq-dev
+    - python-virtualenv
+    - postgresql-client-common
+    - postgresql-client
+    - python-dev
+    - python-imaging
+    - python-lxml
+    - python-pyproj
+    - python-shapely
+    - python-gdal
+    - python-nose
+    - python-httplib2
+    - python-software-properties
+    - gettext
+    - build-essential
+    - libxml2-dev
+    - libxslt1-dev
+    - zlib1g-dev
+    - gdal-bin
+    - libgeos-dev
+    - libproj-dev
+    - unzip
+    - zip
+    - libjpeg-dev
+    - libpng-dev
+    - libxslt-dev
+
 
 - name: install known_hosts file to access GitHub
   copy: src=ssh_conf/known_hosts dest={{ssh_dir}}/known_hosts

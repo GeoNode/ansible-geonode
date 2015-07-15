@@ -6,6 +6,4 @@
 
 - include: nginx.yml
 - include: uwsgi.yml
-- include: django.yml
-#- include: config_supervisor.yml
-
+- include: geonode.yml
