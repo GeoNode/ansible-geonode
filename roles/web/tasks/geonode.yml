@@ -45,41 +45,45 @@
   copy: src=ssh_conf/known_hosts dest={{ssh_dir}}/known_hosts
 
 - name: checkout latest web app code
-  git: repo={{code_repository}} version={{app_name}} dest={{app_code_dir}}
+  git: repo={{code_repository}} version={{app_name}} dest={{app_code_dir}}/{{app_name}}
 
 - name: check if virtualenv already exists
-  stat: path={{virtualenv_dir}}
+  stat: path={{virtualenv_dir}}/{{app_name}}
   register: venv_dir
 
 - name: create virtualenv for Django web application
-  shell: virtualenv --system-site-packages {{virtualenv_dir}}
+  shell: virtualenv --system-site-packages {{virtualenv_dir}}/{{app_name}}
   when: venv_dir.stat.isdir is not defined
 
 - name: install web application dependencies listed in requirements.txt
-  pip: name=file:///{{app_code_dir}}
-       virtualenv={{virtualenv_dir}}
+  pip: name=file:///{{app_code_dir}}/{{app_name}}
+       virtualenv={{virtualenv_dir}}/{{app_name}}
        extra_args='-e'
 
-- name: check if app/static directory exists
-  stat: path={{app_code_dir}}/static
-  register: static_dir
-
 - name: create static directory for Django app if it does not exist
-  command: mkdir {{app_code_dir}}/static
-  when: static_dir.stat.isdir is not defined
+  file: path=/var/www/{{app_name}}/static state=directory mode=0755 owner=www-data group=www-data
+  sudo: yes
 
-- file: path=/var/log/uwsgi state=directory mode=0777
+- name: create uploaded directory for Django app if it does not exist
+  file: path=/var/www/{{app_name}}/uploaded state=directory mode=0755 owner=www-data group=www-data
+  sudo: yes
+
+- name: create vassal file as a symlink
+  file: src=/etc/uwsgi/vassals-default.ini dest=/etc/uwsgi/{{app_name}}.ini owner=www-data group=www-data state=link
+  sudo: yes
+
+- name: create uwsgi log directory
+  file: path=/var/log/uwsgi state=directory mode=0777 owner=www-data group=www-data
+  sudo: yes
 
 - name: Django collectstatic
   django_manage: command=collectstatic
-                 app_path={{app_code_dir}}
-                 virtualenv={{virtualenv_dir}}
-                 settings={{django_settings}}
-  environment: django_env_vars
+                 app_path={{app_code_dir}}/{{app_name}}
+                 virtualenv={{virtualenv_dir}}/{{app_name}}
+                 settings={{main_module}}.settings
 
-- name: Django syncdb
-  django_manage: command=syncdb
-                 app_path={{app_code_dir}}
-                 virtualenv={{virtualenv_dir}}
-                 settings={{django_settings}}
-  environment: django_env_vars
+#- name: Django syncdb
+#  django_manage: command=syncdb
+#                 app_path={{app_code_dir}}/{{app_name}}
+#                 virtualenv={{virtualenv_dir}}/{{app_name}}
+#                 settings={{main_module}}.settings

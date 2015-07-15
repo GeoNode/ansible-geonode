@@ -12,7 +12,7 @@
   sudo: yes
 
 - name: write default vassals configuration file
-  template: src=vassals-default.ini.j2 dest=/etc/uwsgi/vassals-default.ini
+  template: src=vassals-default.skel.j2 dest=/etc/uwsgi/vassals-default.skel
   sudo: yes
 
 - name: write uwsgi configuration for upstart in emperor mode

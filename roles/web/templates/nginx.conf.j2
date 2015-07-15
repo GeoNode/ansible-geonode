@@ -11,7 +11,7 @@ server {
 
     location / {
         root /var/www/$subdomain;
-        try_files $uri $uri/ @wsgiapp;
+        try_files $uri @wsgiapp;
     }
 
     location @wsgiapp {
