@@ -56,7 +56,15 @@
   shell: virtualenv --system-site-packages {{virtualenv_dir}}/{{app_name}}
   when: venv_dir.stat.isdir is not defined
 
+- name: check if requirements file exists
+  stat: path={{app_code_dir}}/{{app_name}}/shared/requirements.txt
+  register: requirements_file
+
 - name: install web application dependencies listed in requirements.txt
+  pip: requirements={{app_code_dir}}/{{app_name}}/shared/requirements.txt virtualenv={{virtualenv_dir}}/{{app_name}}
+  when: requirements_file.stat.exists
+
+- name: install web application
   pip: name=file:///{{app_code_dir}}/{{app_name}}
        virtualenv={{virtualenv_dir}}/{{app_name}}
        extra_args='-e'
@@ -90,7 +98,6 @@
   postgresql_ext: name=postgis db={{app_name}}
   sudo: yes
   sudo_user: postgres
-
 
 - name: Django collectstatic
   django_manage: command=collectstatic
