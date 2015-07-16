@@ -1,4 +1,5 @@
 - hosts: tag_role_webservers
   remote_user: ubuntu
   roles:
+    - database
     - web

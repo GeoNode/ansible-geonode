@@ -3,9 +3,9 @@ SITEURL = "{{site_url}}"
 DATABASES = {
     'default': {
          'ENGINE': 'django.db.backends.postgresql_psycopg2',
-         'NAME': 'geonode',
-         'USER': 'geonode',
-         'PASSWORD': 'geonode',
+         'NAME': '{{app_name}}',
+         'USER': '{{db_user}}',
+         'PASSWORD': '{{db_pasword}}',
      },
     # vector datastore for uploads
     'datastore' : {
