@@ -46,7 +46,7 @@
   copy: src=ssh_conf/known_hosts dest={{ssh_dir}}/known_hosts
 
 - name: checkout latest web app code
-  git: repo={{code_repository}} version={{app_name}} dest={{app_code_dir}}/{{app_name}}
+  git: repo={{code_repository}} version={{app_name}} dest={{app_code_dir}}/{{app_name}} recursive=yes
 
 - name: check if virtualenv already exists
   stat: path={{virtualenv_dir}}/{{app_name}}
