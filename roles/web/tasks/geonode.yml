@@ -78,7 +78,7 @@
   sudo: yes
 
 - name: create vassal file as a symlink
-  file: src=/etc/uwsgi/vassals-default.ini dest=/etc/uwsgi/{{app_name}}.ini owner=www-data group=www-data state=link
+  file: src=/etc/uwsgi/vassals-default.skel dest=/etc/uwsgi/{{app_name}}.ini owner=www-data group=www-data state=link
   sudo: yes
 
 - name: create uwsgi log directory
@@ -99,11 +99,15 @@
   sudo: yes
   sudo_user: postgres
 
+- name: install local_settings file
+  template: src=local_settings.py.j2 dest={{app_code_dir}}/{{app_name}}/{{main_module}}/local_settings.py
+
 - name: Django collectstatic
   django_manage: command=collectstatic
                  app_path={{app_code_dir}}/{{app_name}}
                  virtualenv={{virtualenv_dir}}/{{app_name}}
                  settings={{main_module}}.settings
+  sudo: yes
 
 - name: Django syncdb
   django_manage: command=syncdb

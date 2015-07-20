@@ -1,11 +1,25 @@
+import os
+
+
+# Defines the directory that contains the settings file as the PROJECT_ROOT
+# It is used for relative settings elsewhere.
+PROJECT_ROOT = os.path.abspath(os.path.dirname(__file__))
+
 SITEURL = "{{site_url}}"
 
 DATABASES = {
     'default': {
-         'ENGINE': 'django.db.backends.postgresql_psycopg2',
+         'ENGINE': 'django.contrib.gis.db.backends.postgis',
+{% if app_name == 'legacy' %}
+         'NAME': '{{db_metadata_instance}}',
+         'HOST': '{{metadata_db}}',
+{% else %}
          'NAME': '{{app_name}}',
+         'HOST': '127.0.0.1',
+{% endif %}
          'USER': '{{db_user}}',
-         'PASSWORD': '{{db_pasword}}',
+         'PASSWORD': '{{db_password}}',
+         'PORT': '5432',
      },
     # vector datastore for uploads
     'datastore' : {
@@ -22,8 +36,8 @@ DATABASES = {
 OGC_SERVER = {
     'default' : {
         'BACKEND' : 'geonode.geoserver',
-        'LOCATION' : 'http://localhost:8080/geoserver/',
-        'PUBLIC_LOCATION' : 'http://localhost:8080/geoserver/',
+        'LOCATION' : '{{geoserver_location}}',
+        'PUBLIC_LOCATION' : '{{geoserver_location}}',
         'USER' : 'admin',
         'PASSWORD' : 'geoserver',
         'MAPFISH_PRINT_ENABLED' : True,
@@ -46,5 +60,5 @@ CATALOGUE = {
     }
 }
 
-MEDIA_ROOT = /var/www/{{ app_name }}/uploaded
-STATIC_ROOT = /var/www/{{ app_name }}/static
+MEDIA_ROOT = "/var/www/{{ app_name }}/uploaded"
+STATIC_ROOT = "/var/www/{{ app_name }}/static"
