@@ -40,3 +40,11 @@
                    role_attr_flags=LOGIN,CREATEDB,NOSUPERUSER
   sudo: yes
   sudo_user: postgres
+
+- name: write the pg_hba.conf file 
+  template: src=pg_hba.conf dest=/etc/postgresql/9.4/main/pg_hba.conf
+  sudo: yes
+
+- name: restart postgres
+  command: /etc/init.d/postgresql restart
+  sudo: yes

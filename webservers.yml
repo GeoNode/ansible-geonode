@@ -3,3 +3,4 @@
   roles:
     - database
     - web
+    - geoserver

@@ -49,6 +49,9 @@
 - name: checkout latest web app code
   git: repo={{code_repository}} version={{app_name}} dest={{app_code_dir}}/{{app_name}}
 
+- name: copy the local_settings.py file in place
+  template: src=local_settings.py.j2 dest={{ app_code_dir}}/{{app_name}}/{{ app_name}}/local_settings.py
+
 - name: check if virtualenv already exists
   stat: path={{virtualenv_dir}}/{{app_name}}
   register: venv_dir
@@ -71,11 +74,11 @@
        extra_args='-e'
 
 - name: create static directory for Django app if it does not exist
-  file: path=/var/www/{{app_name}}/static state=directory mode=0755 owner=www-data group=www-data
+  file: path=/var/www/{{app_name}}/static state=directory mode=0777 owner=www-data group=www-data
   sudo: yes
 
 - name: create uploaded directory for Django app if it does not exist
-  file: path=/var/www/{{app_name}}/uploaded state=directory mode=0755 owner=www-data group=www-data
+  file: path=/var/www/{{app_name}}/uploaded state=directory mode=0777 owner=www-data group=www-data
   sudo: yes
 
 - name: rename the vassals-default.ini file to the app name 
@@ -87,8 +90,8 @@
   file: path=/var/log/uwsgi state=directory mode=0777 owner=www-data group=www-data
   sudo: yes
 
-- name: create {{app_name}} db
-  postgresql_db: name={{app_name}}
+- name: create {{db_metadata_instance}} db
+  postgresql_db: name={{db_metadata_instance}}
                  encoding='UTF-8'
                  lc_collate='en_US.UTF-8'
                  lc_ctype='en_US.UTF-8'
@@ -96,8 +99,22 @@
   sudo: yes
   sudo_user: postgres
 
-- name: add postgis to the {{app_name}} db
-  postgresql_ext: name=postgis db={{app_name}}
+- name: add postgis to the {{db_metadata_instance}} db
+  postgresql_ext: name=postgis db={{db_metadata_instance}}
+  sudo: yes
+  sudo_user: postgres
+
+- name: create {{db_data_instance}} db
+  postgresql_db: name={{db_data_instance}}
+                 encoding='UTF-8'
+                 lc_collate='en_US.UTF-8'
+                 lc_ctype='en_US.UTF-8'
+                 owner={{db_user}}
+  sudo: yes
+  sudo_user: postgres
+
+- name: add postgis to the {{db_data_instance}} db
+  postgresql_ext: name=postgis db={{db_data_instance}}
   sudo: yes
   sudo_user: postgres
 

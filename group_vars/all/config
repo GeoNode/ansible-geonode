@@ -24,7 +24,7 @@ app_name: sdgeodata
 
 # Django settings module to use when running Manage commands
 # for example, txt2react.settings
-main_module: geonode
+main_module: "{{ app_name }}"
 
 # remote git repository to pull application code from, for example:
 code_repository: https://github.com/jj0hns0n/sdgeodata.git 
@@ -48,6 +48,8 @@ requirements_file: "{{app_code_dir}}/requirements.txt"
 site_url: "{{ app_name }}"
 
 # Server name for nginx.
-server_name: 54.237.59.140 
+server_name: 54.157.140.26 
 
 ssh_dir: ~/.ssh/
+
+geoserver_url: http://build.geonode.org/geoserver/latest/geoserver.war

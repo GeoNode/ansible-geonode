@@ -1,11 +1,15 @@
+import os
+
+PROJECT_ROOT = os.path.abspath(os.path.dirname(__file__))
+
 SITEURL = "{{site_url}}"
 
 DATABASES = {
     'default': {
          'ENGINE': 'django.db.backends.postgresql_psycopg2',
-         'NAME': '{{app_name}}',
+         'NAME': '{{db_metadata_instance}}',
          'USER': '{{db_user}}',
-         'PASSWORD': '{{db_pasword}}',
+         'PASSWORD': '{{db_password}}',
      },
     # vector datastore for uploads
     'datastore' : {
@@ -13,8 +17,8 @@ DATABASES = {
         'NAME': '{{db_data_instance}}',
         'USER' : '{{db_user}}',
         'PASSWORD' : '{{db_password}}',
-        'HOST' : '{{datastore_db}}',
-        'PORT' : '5432',
+        'HOST' : 'localhost',
+        'PORT' : 5432
     }
 }
 
@@ -23,7 +27,7 @@ OGC_SERVER = {
     'default' : {
         'BACKEND' : 'geonode.geoserver',
         'LOCATION' : 'http://localhost:8080/geoserver/',
-        'PUBLIC_LOCATION' : 'http://localhost:8080/geoserver/',
+        'PUBLIC_LOCATION' : 'http://{{server_name}}/geoserver/',
         'USER' : 'admin',
         'PASSWORD' : 'geoserver',
         'MAPFISH_PRINT_ENABLED' : True,
@@ -35,7 +39,7 @@ OGC_SERVER = {
         'WPS_ENABLED' : False,
         'LOG_FILE': '%s/geoserver/data/logs/geoserver.log' % os.path.abspath(os.path.join(PROJECT_ROOT, os.pardir)),
         # Set to name of database in DATABASES dictionary to enable
-        'DATASTORE': '', #'datastore',
+        'DATASTORE': 'datastore', #'datastore',
     }
 }
 
@@ -46,5 +50,5 @@ CATALOGUE = {
     }
 }
 
-MEDIA_ROOT = /var/www/{{ app_name }}/uploaded
-STATIC_ROOT = /var/www/{{ app_name }}/static
+MEDIA_ROOT = "/var/www/{{ app_name }}/uploaded"
+STATIC_ROOT = "/var/www/{{ app_name }}/static"
