@@ -45,9 +45,9 @@ requirements_file: "{{app_code_dir}}/requirements.txt"
 
 # root domain name the server should run as. do not include a subdomain,
 # for example, txt2react.com
-site_url: "{{ app_name }}'
+site_url: "{{ app_name }}"
 
 # Server name for nginx.
-server_name: 54.237.30.229 
+server_name: 54.237.59.140 
 
 ssh_dir: ~/.ssh/

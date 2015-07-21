@@ -1,21 +1,21 @@
 server {
     listen      80;
-    server_name 54.237.30.229 
+    server_name 54.237.59.140;
 
     charset     utf-8;
 
-    access_log /var/log/nginx/$subdomain.access.log;
-    error_log /var/log/nginx/$subdomain.error.log info;
+    access_log /var/log/nginx/sdgeodata.access.log;
+    error_log /var/log/nginx/sdgeodata.error.log info;
 
     client_max_body_size 200M;
 
     location / {
-        root /var/www/$subdomain;
+        root /var/www/sdgeodata;
         try_files $uri @wsgiapp;
     }
 
     location @wsgiapp {
-        uwsgi_pass  unix:///tmp/$subdomain.sock;
+        uwsgi_pass  unix:///tmp/sdgeodata.sock;
         include     /etc/nginx/uwsgi_params;
     }
 }

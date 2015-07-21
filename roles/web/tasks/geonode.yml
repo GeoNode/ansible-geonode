@@ -79,12 +79,8 @@
   sudo: yes
 
 - name: rename the vassals-default.ini file to the app name 
-  #file: src=/etc/uwsgi/vassals-default.ini dest=/etc/uwsgi/{{app_name}}.ini owner=www-data group=www-data state=link
-  command: mv /etc/uwsgi/vassals-default.ini /etc/uwsgi/{{app_name}}.ini
-  sudo: yes
-
-- name: chown the vassals file
-  command: chown www-data:www-data /etc/uwsgi/{{app_name}}.ini
+  file: src=/etc/uwsgi/vassals-default.skel dest=/etc/uwsgi/{{app_name}}.ini owner=www-data group=www-data state=link
+  #command: mv /etc/uwsgi/vassals-default.ini /etc/uwsgi/{{app_name}}.ini
   sudo: yes
 
 - name: create uwsgi log directory
