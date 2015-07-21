@@ -1,6 +1,7 @@
-db_data_instance: wmdata
-db_metadata_instance: worldmaplegacy
-db_user: worldmap
+db_data_instance: sdgeodata 
+db_metadata_instance: sdgeodata_app 
+db_password: sdgeodata
+db_user: sdgeodata
 db_region: us-east-1
 db_engine: postgres
 db_instance_type: db.t2.medium
@@ -19,14 +20,14 @@ db_license_model: postgresql-license
 # Also, it would be the name of the branch in the worldmap repo. 
 # For example worldmap, worldmap-legacy, master, feature1.
 # The deployed service will be available at app_name.cga.terranodo.io
-app_name: worldmap
+app_name: sdgeodata 
 
 # Django settings module to use when running Manage commands
 # for example, txt2react.settings
 main_module: geonode
 
 # remote git repository to pull application code from, for example:
-code_repository: http://github.com/cga-harvard/cga-worldmap.git
+code_repository: https://github.com/jj0hns0n/sdgeodata.git 
 
 # name of the user created by the Fabric script that Ansible will use to
 # handle server tasks
@@ -44,7 +45,9 @@ requirements_file: "{{app_code_dir}}/requirements.txt"
 
 # root domain name the server should run as. do not include a subdomain,
 # for example, txt2react.com
-site_url: "{{ app_name }}.cga.terranodo.io"
+site_url: "{{ app_name }}'
 
 # Server name for nginx.
-server_name: ~^(?P<subdomain>.+)\.cga\.terranodo\.io$
+server_name: 54.237.30.229 
+
+ssh_dir: ~/.ssh/
