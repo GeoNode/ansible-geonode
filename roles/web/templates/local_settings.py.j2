@@ -12,7 +12,7 @@ DATABASES = {
          'PASSWORD': '{{db_password}}',
      },
     # vector datastore for uploads
-    'datastore' : {
+    '{{ app_name }}' : {
         'ENGINE': 'django.contrib.gis.db.backends.postgis',
         'NAME': '{{db_data_instance}}',
         'USER' : '{{db_user}}',
@@ -39,7 +39,7 @@ OGC_SERVER = {
         'WPS_ENABLED' : False,
         'LOG_FILE': '%s/geoserver/data/logs/geoserver.log' % os.path.abspath(os.path.join(PROJECT_ROOT, os.pardir)),
         # Set to name of database in DATABASES dictionary to enable
-        'DATASTORE': 'datastore', #'datastore',
+        'DATASTORE': '{{ app_name }}', #'datastore',
     }
 }
 

@@ -48,7 +48,7 @@ requirements_file: "{{app_code_dir}}/requirements.txt"
 site_url: "{{ app_name }}"
 
 # Server name for nginx.
-server_name: 54.157.140.26 
+server_name: 54.90.31.144 
 
 ssh_dir: ~/.ssh/
 
