@@ -44,7 +44,7 @@
 
 
 - name: install known_hosts file to access GitHub
-  copy: src=files/known_hosts dest={{ssh_dir}}/known_hosts
+  copy: src=known_hosts dest={{ssh_dir}}/known_hosts
 
 - name: checkout latest web app code
   git: repo={{code_repository}} version={{app_name}} dest={{app_code_dir}}/{{app_name}}
