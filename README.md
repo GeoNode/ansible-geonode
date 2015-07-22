@@ -13,19 +13,18 @@ Role Variables
 
 * `app_name` - GeoNode project name (default: `my_geonode`)
 * `github_user` - GitHub username that owns the project (default: `GeoNode`)
-* `code_repository` - URL to the Code Repository (default: https://github.com/{{ github_user }}/{{ app_name }}.git)
+* `code_repository` - URL to the Code Repository (default: `https://github.com/{{ github_user }}/{{ app_name }}.git`)
 
 The `app_name` variable will be used to set the database names and credentials. You can override this behavior with the following variables.
 
-* `db_data_instance` - Database instance for spatial data (default: "{{ app_name }}")
-* `db_metadata_instance` - Database instance for the application metadata (default: "{{ app_name }}_app")
-* `db_password` - Database password (default: "{{ app_name }}")
-* `db_user` - Database user (default: "{{ app_name }}")
+* `db_data_instance` - Database instance for spatial data (default: `{{ app_name }}`)
+* `db_metadata_instance` - Database instance for the application metadata (default: `{{ app_name }}_app`)
+* `db_password` - Database password (default: `{{ app_name }}`)
+* `db_user` - Database user (default: `{{ app_name }}`)
 
 You can also change the war used to deploy geoserver with the following variable.
 
-* `geoserver_url` - GeoServer war URL (default: http://build.geonode.org/geoserver/latest/geoserver.war)
-
+* `geoserver_url` - GeoServer war URL (default: `http://build.geonode.org/geoserver/latest/geoserver.war`)
 
 Dependencies
 ------------
@@ -34,12 +33,12 @@ Dependencies
 Example Playbook
 ----------------
 
-Including an example of how to use your role (for instance, with variables passed in as parameters) is always nice for users too:
+The following is an example playbook using variables. This playbook will be included in your geonode template project clone.
 
     - hosts: webservers
         remote_user: ubuntu
         vars:
-            app_name: my_geonode 
+            app_name: my_geonode
             github_user: jj0hns0n 
         roles:
             - { role: ortelius.geonode }
