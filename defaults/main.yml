@@ -1,3 +1,6 @@
+---
+# defaults file for geonode
+
 # app_name should be a shorthand, lowercase, no spaces version of the
 # application name since this variable will be used as a directory name
 # Also, it would be the name of the branch in the worldmap repo. 
