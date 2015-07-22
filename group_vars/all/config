@@ -1,7 +1,23 @@
-db_data_instance: sdgeodata 
-db_metadata_instance: sdgeodata_app 
-db_password: sdgeodata
-db_user: sdgeodata
+# app_name should be a shorthand, lowercase, no spaces version of the
+# application name since this variable will be used as a directory name
+# Also, it would be the name of the branch in the worldmap repo. 
+# For example worldmap, worldmap-legacy, master, feature1.
+# The deployed service will be available at app_name.cga.terranodo.io
+app_name: my_geonode 
+
+# github user who owns the repository
+github_user: jj0hns0n
+
+# remote git repository to pull application code from, for example:
+code_repository: "https://github.com/{{ github_user }}/{{ app_name }}.git"
+
+# Server name for nginx.
+server_name: 54.157.187.117 
+
+db_data_instance: "{{ app_name }}"
+db_metadata_instance: "{{ app_name }}_app"
+db_password: "{{ app_name }}"
+db_user: "{{ app_name }}"
 db_region: us-east-1
 db_engine: postgres
 db_instance_type: db.t2.medium
@@ -15,19 +31,9 @@ db_backup_retention: 35
 db_backup_window: 07:00-07:30
 db_license_model: postgresql-license
 
-# app_name should be a shorthand, lowercase, no spaces version of the
-# application name since this variable will be used as a directory name
-# Also, it would be the name of the branch in the worldmap repo. 
-# For example worldmap, worldmap-legacy, master, feature1.
-# The deployed service will be available at app_name.cga.terranodo.io
-app_name: sdgeodata 
-
 # Django settings module to use when running Manage commands
 # for example, txt2react.settings
 main_module: "{{ app_name }}"
-
-# remote git repository to pull application code from, for example:
-code_repository: https://github.com/jj0hns0n/sdgeodata.git 
 
 # name of the user created by the Fabric script that Ansible will use to
 # handle server tasks
@@ -46,9 +52,6 @@ requirements_file: "{{app_code_dir}}/requirements.txt"
 # root domain name the server should run as. do not include a subdomain,
 # for example, txt2react.com
 site_url: "{{ app_name }}"
-
-# Server name for nginx.
-server_name: 54.90.31.144 
 
 ssh_dir: ~/.ssh/
 
