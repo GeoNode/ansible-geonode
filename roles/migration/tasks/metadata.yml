@@ -13,6 +13,21 @@
   sudo_user: postgres
   command: psql {{app_name}} -c "DELETE FROM base_resourcebase"
 
+- name: "clear old accounts"
+  sudo: yes
+  sudo_user: postgres
+  command:  psql {{app_name}} -c "DELETE FROM account_account"
+
+- name: "clear old accounts email"
+  sudo: yes
+  sudo_user: postgres
+  command:  psql {{app_name}} -c "DELETE FROM account_emailaddress"
+
+- name: "clear old groups"
+  sudo: yes
+  sudo_user: postgres
+  command: psql {{app_name}} -c "DELETE FROM people_profile_groups"
+
 - name: "clear old users"
   sudo: yes
   sudo_user: postgres
@@ -33,6 +48,11 @@
   sudo_user: postgres
   shell: PGPASSWORD={{db_password}} psql -U {{db_user}} -h {{metadata_db}} {{db_metadata_instance}} -c 'copy (select id, password, last_login, is_superuser, username, first_name, last_name, email, is_staff, is_active, date_joined from auth_user) to stdout with csv' | psql {{app_name}} -c 'copy people_profile (id, password, last_login, is_superuser, username, first_name, last_name, email, is_staff, is_active, date_joined) from stdin csv'
 
+- name: "reset user sequence"
+  sudo: yes
+  sudo_user: postgres
+  shell: psql {{app_name}} -c "SELECT setval(pg_get_serial_sequence('people_profile', 'id'), coalesce(max(id),0) + 1, false) FROM people_profile;"
+
 - name: "get layers content type id needed for polymorphic"
   sudo: yes
   sudo_user: postgres
@@ -42,12 +62,15 @@
 - name: "copy items to resourcebase"
   sudo: yes
   sudo_user: postgres
-  shell: PGPASSWORD={{db_password}} psql -U {{db_user}} -h {{metadata_db}} {{db_metadata_instance}} -c "copy (select id, {{layer_ctype.stdout}}, uuid, owner_id, title, date, date_type, abstract, language, supplemental_information, 'EPSG:4326', 'csw_typename', 'csw_schema', 'csw_mdsource', 'csw_type', 'csw_wkt_geometry', false, 0, 0, false, true, bbox_x0, bbox_y0, bbox_x1, bbox_y1 from augmented_maps_layer) to stdout with csv" | psql {{app_name}} -c "copy base_resourcebase (id, polymorphic_ctype_id, uuid, owner_id, title, date, date_type, abstract, language, supplemental_information, srid, csw_typename, csw_schema, csw_mdsource, csw_type, csw_wkt_geometry, metadata_uploaded, popular_count, share_count, featured, is_published, bbox_x0, bbox_y0, bbox_x1, bbox_y1) from stdin csv"
+  shell: PGPASSWORD={{db_password}} psql -U {{db_user}} -h {{metadata_db}} {{db_metadata_instance}} -c "copy (select id, {{layer_ctype.stdout}}, uuid, owner_id, title, date, date_type, abstract, language, supplemental_information, 'EPSG:4326', 'csw_typename', 'csw_schema', 'csw_mdsource', 'csw_type', 'csw_wkt_geometry', false, 0, 0, false, true, bbox_x0, bbox_y0, bbox_x1, bbox_y1, typename from augmented_maps_layer) to stdout with csv" | psql {{app_name}} -c "copy base_resourcebase (id, polymorphic_ctype_id, uuid, owner_id, title, date, date_type, abstract, language, supplemental_information, srid, csw_typename, csw_schema, csw_mdsource, csw_type, csw_wkt_geometry, metadata_uploaded, popular_count, share_count, featured, is_published, bbox_x0, bbox_y0, bbox_x1, bbox_y1, detail_url) from stdin csv"
 
+- name: "set detail_url as /layers/{{typename}}"
+  sudo: yes
+  sudo_user: postgres
+  shell: psql {{app_name}} -c "UPDATE base_resourcebase SET detail_url = '/layers/'||detail_url;"
 
 - name: "copy items to layer table"
   sudo: yes
   sudo_user: postgres
   shell: PGPASSWORD={{db_password}} psql -U {{db_user}} -h {{metadata_db}} {{db_metadata_instance}} -c 'copy (select id, title, abstract, purpose, constraints_other, supplemental_information, distribution_description, data_quality_statement, workspace, store, "storeType", name, typename, name from augmented_maps_layer) to stdout with csv' | psql {{app_name}} -c 'copy layers_layer (resourcebase_ptr_id, title_en, abstract_en, purpose_en, constraints_other_en, supplemental_information_en, distribution_description_en, data_quality_statement_en, workspace, store, "storeType", name, typename, charset) from stdin csv'
-
 
