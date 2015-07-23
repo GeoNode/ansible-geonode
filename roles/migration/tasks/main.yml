@@ -1,0 +1,6 @@
+##
+# these scripts migrate an old geonode version to a new one.
+#
+---
+
+- include: metadata.yml
