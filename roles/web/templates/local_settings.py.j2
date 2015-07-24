@@ -37,19 +37,19 @@ OGC_SERVER = {
     'default' : {
         'BACKEND' : 'geonode.geoserver',
         'LOCATION' : '{{geoserver_location}}',
-        'PUBLIC_LOCATION' : '{{geoserver_location}}',
-        'USER' : 'admin',
-        'PASSWORD' : 'geoserver',
+        'PUBLIC_LOCATION' : 'http://{{site_url}}/geoserver/',
+        'USER' : '{{geoserver_user}}',
+        'PASSWORD' : '{{geoserver_password}}',
         'MAPFISH_PRINT_ENABLED' : True,
         'PRINT_NG_ENABLED' : True,
         'GEONODE_SECURITY_ENABLED' : True,
         'GEOGIG_ENABLED' : False,
-        'WMST_ENABLED' : False,
+        'WMST_ENABLED' : True,
         'BACKEND_WRITE_ENABLED': True,
-        'WPS_ENABLED' : False,
+        'WPS_ENABLED' : True,
         'LOG_FILE': '%s/geoserver/data/logs/geoserver.log' % os.path.abspath(os.path.join(PROJECT_ROOT, os.pardir)),
         # Set to name of database in DATABASES dictionary to enable
-        'DATASTORE': '', #'datastore',
+        'DATASTORE': 'datastore', #'datastore',
     }
 }
 
@@ -64,3 +64,6 @@ MEDIA_ROOT = "/var/www/{{ app_name }}/uploaded"
 STATIC_ROOT = "/var/www/{{ app_name }}/static"
 
 SECRET_KEY = "{{django_secret_key}}"
+
+DEFAULT_ANONYMOUS_VIEW_PERMISSION = True
+DEFAULT_ANONYMOUS_DOWNLOAD_PERMISSION = True
