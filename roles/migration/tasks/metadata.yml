@@ -73,4 +73,3 @@
   sudo: yes
   sudo_user: postgres
   shell: PGPASSWORD={{db_password}} psql -U {{db_user}} -h {{metadata_db}} {{db_metadata_instance}} -c 'copy (select id, title, abstract, purpose, constraints_other, supplemental_information, distribution_description, data_quality_statement, workspace, store, "storeType", name, typename, name from augmented_maps_layer) to stdout with csv' | psql {{app_name}} -c 'copy layers_layer (resourcebase_ptr_id, title_en, abstract_en, purpose_en, constraints_other_en, supplemental_information_en, distribution_description_en, data_quality_statement_en, workspace, store, "storeType", name, typename, charset) from stdin csv'
-

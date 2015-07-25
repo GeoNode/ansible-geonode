@@ -3,4 +3,4 @@
   roles:
     - database
     - web
-    - migration
+    - { role: migration, when: app_name != 'legacy' }
