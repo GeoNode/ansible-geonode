@@ -1,5 +1,6 @@
 db_data_instance: wmdata
 db_metadata_instance: worldmaplegacy
+db_geonetwork_instance: geonetwork
 db_user: worldmap
 db_region: us-east-1
 db_engine: postgres
@@ -9,6 +10,7 @@ db_multi_zone: yes
 db_publicly_accessible: yes
 db_data_size: 200
 db_metadata_size: 10
+db_geonetwork_size: 10
 db_maint_window: mon:05:00-mon:06:00
 db_backup_retention: 35
 db_backup_window: 07:00-07:30
