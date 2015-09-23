@@ -11,3 +11,15 @@ ansible-playbook site.yml
 ```
 
 This playbook will recognize the right ubuntu hosts because they are tagged with role=webservers or role=dbservers through the AWS interface.
+
+Example scenarios and the way to run them:
+
+ #. Deploying legacy worldmap on the new infrastructure
+
+ #. Deploying GeoNode master branch on the new infrastructure
+
+ #. Deploying a feature branch for testing
+
+ #. Deploying a feature branch that relies on an external service, like solr.
+
+ #. Removing a feature branch that is not needed anymore. 
