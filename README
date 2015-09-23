@@ -23,3 +23,5 @@ Example scenarios and the way to run them:
  #. Deploying a feature branch that relies on an external service, like solr.
 
  #. Removing a feature branch that is not needed anymore. 
+
+ #. Updating a feature branch that moved ahead.
