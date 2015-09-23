@@ -52,6 +52,32 @@
           application: worldmap
           owner: ariel
 
+    - name: Create multi-zone Postgres instance for geonetwork on RDS
+      rds:
+        command: create
+        instance_name: "{{ db_geonetwork_instance }}"
+        region: "{{ db_region }}"
+        db_engine: postgres
+        instance_type: "{{ db_instance_type }}"
+        multi_zone: "{{ db_multi_zone}}"
+        publicly_accessible: "{{ db_publicly_accessible }}"
+        size: "{{ db_geonetwork_size }}"
+        maint_window: "{{ db_maint_window }}"
+        backup_retention: "{{ db_backup_retention }}"
+        backup_window: "{{ db_backup_window }}"
+        license_model: "{{ db_license_model }}"
+        storage_type: "{{ db_storage_type }}"
+        subnet: "{{ db_vpc_subnet }}"
+        vpc_security_groups: "{{ db_vpc_group }}"
+        db_name: "{{ db_geonetwork_instance }}"
+        username: "{{ db_user }}"
+        password: "{{ db_password }}"
+        tags:
+          environment: testing
+          application: worldmap
+          owner: ariel
+
+
 
 
     - name: Get facts about data instance.
