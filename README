@@ -1,4 +1,4 @@
-In order to use this script, first export the AWS credentials enviroment variables, then add the correct .pem file to your ssh agent and call the ansible-playbook on the site.yml file.
+In order to use this script, first export the AWS credentials enviroment variables, then add the correct .pem file to your ssh agent and call the ansible-playbook on the webservers.yml file.
 
 ```
 export AWS_ACCESS_KEY_ID='XXX'
@@ -7,7 +7,7 @@ export AWS_SECRET_ACCESS_KEY='XXX'
 ssh-agent bash
 ssh-add ~/.ssh/keypair.pem
 
-ansible-playbook site.yml
+ansible-playbook webservers.yml
 ```
 
 This playbook will recognize the right ubuntu hosts because they are tagged with role=webservers or role=dbservers through the AWS interface.
@@ -16,12 +16,25 @@ Example scenarios and the way to run them:
 
  #. Deploying legacy worldmap on the new infrastructure
 
+      ansible-playbook webservers.yml --extra-vars "app_name=legacy"
+
  #. Deploying GeoNode master branch on the new infrastructure
+      
+      ansible-playbook webservers.yml --extra-vars "app_name=master"
 
  #. Deploying a feature branch for testing
 
+      ansible-playbook webservers.yml --extra-vars "app_name=fasthome"
+
  #. Deploying a feature branch that relies on an external service, like solr.
+
+      ansible-playbook webservers.yml --extra-vars "app_name=ogpsearch2"
+      # manually log into the machine to set up the extra steps.
 
  #. Removing a feature branch that is not needed anymore. 
 
+      ansible-playbook remove.yml --extra-vars "app_name=fasthome"
+
  #. Updating a feature branch that moved ahead.
+      
+      ansible-playbook webservers.yml --extra-vars "app_name=fasthome"

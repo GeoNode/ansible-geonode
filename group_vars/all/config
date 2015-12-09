@@ -4,7 +4,7 @@ db_geonetwork_instance: geonetwork
 db_user: worldmap
 db_region: us-east-1
 db_engine: postgres
-db_instance_type: db.t2.medium
+db_instance_type: db.m4.xlarge
 db_storage_type: gp2
 db_multi_zone: yes
 db_publicly_accessible: yes

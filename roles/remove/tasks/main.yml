@@ -1,0 +1,24 @@
+---
+# file: remove.yml
+- name: remove virtualenv for {{app_name}}
+  file: path={{virtualenv_dir}}/{{app_name}} state=absent
+
+- name: remove code dir for {{app_name}}
+  file: path={{app_code_dir}}/{{app_name}} state=absent
+
+- name: remove  uwsgi log file for {{app_name}}
+  sudo: yes
+  file: path=/var/log/uwsgi/{{app_name}}.log state=absent
+
+- name: remove nginx error log file for {{app_name}}
+  sudo: yes
+  file: path=/var/log/nginx/{{app_name}}.error.log state=absent
+
+- name: remove nginx access log file for {{app_name}}
+  sudo: yes
+  file: path=/var/log/nginx/{{app_name}}.access.log state=absent
+
+- name: remove database for {{app_name}}
+  sudo: yes
+  sudo_user: postgres
+  postgresql_db: name={{app_name}} state=absent

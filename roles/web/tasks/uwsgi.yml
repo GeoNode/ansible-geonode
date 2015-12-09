@@ -2,6 +2,12 @@
 # Install uwsgi from pypi and configure it with upstart in emperor mode.
 #
 ---
+- name: ensure python server packages are installed
+  apt: name={{item}}
+  sudo: yes
+  with_items:
+    - python-dev
+    - python-virtualenv
 
 - name: add uwsgi from pypi
   pip: name=uwsgi
