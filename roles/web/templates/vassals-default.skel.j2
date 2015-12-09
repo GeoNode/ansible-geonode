@@ -16,7 +16,8 @@ logto = /var/log/uwsgi/%n.log
 chdir = {{app_code_dir}}/%n
 module = django.core.handlers.wsgi:WSGIHandler()
 
-;enable-threads = true
+enable-threads = true
+threads = 20
 
 virtualenv = {{virtualenv_dir}}/%n
 vacuum = true
