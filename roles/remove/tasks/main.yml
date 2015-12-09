@@ -22,3 +22,7 @@
   sudo: yes
   sudo_user: postgres
   postgresql_db: name={{app_name}} state=absent
+
+- name: Restart uwsgi emperor
+  sudo: yes
+  service: name=uwsgi state=restarted
