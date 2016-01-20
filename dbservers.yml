@@ -58,7 +58,7 @@
         instance_name: "{{ db_geonetwork_instance }}"
         region: "{{ db_region }}"
         db_engine: postgres
-        instance_type: "{{ db_instance_type }}"
+        instance_type: "{{ db_geonetwork_instance_type }}"
         multi_zone: "{{ db_multi_zone}}"
         publicly_accessible: "{{ db_publicly_accessible }}"
         size: "{{ db_geonetwork_size }}"
