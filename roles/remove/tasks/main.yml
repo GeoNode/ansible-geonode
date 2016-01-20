@@ -26,3 +26,8 @@
 - name: Restart uwsgi emperor
   sudo: yes
   service: name=uwsgi state=restarted
+
+- name: Send notification message via Slack
+  slack:
+      token: T04HF1N5X/B0G8C5B0V/S01Dtuhbdv4f4N2PqH3aCR1W
+      msg: "{{app_name}}.cga.terranodo.io undeploy completed"
