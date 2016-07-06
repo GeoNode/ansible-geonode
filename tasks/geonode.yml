@@ -139,15 +139,12 @@
                  virtualenv={{virtualenv_dir}}/{{app_name}}
                  settings={{main_module}}.settings
 
-- name: Copy initial fixtures in place 
-  template: src=fixtures.json.j2 dest={{ app_code_dir}}/{{app_name}}/fixtures.json
-
-- name: Load the fixtures (Create the superuser)
-  django_manage: command="loaddata" 
-                 app_path={{app_code_dir}}/{{app_name}}
-                 virtualenv={{virtualenv_dir}}/{{app_name}}
-                 settings={{main_module}}.settings
-                 fixtures={{ app_code_dir}}/{{app_name}}/fixtures.json
+- name: Create superuser
+  shell: >
+    PYTHONPATH=. DJANGO_SETTINGS_MODULE={{main_module}}.settings
+    {{virtualenv_dir}}/{{app_name}}/bin/python -c
+    "from geonode.people.models import Profile; Profile.objects.create_superuser('admin', 'admin@geonode.org', 'admin')"
+    chdir={{app_code_dir}}/{{app_name}}/{{main_module}}
 
 - name: wait for geoserver to be up
   shell: curl --head --silent http://localhost:8080/geoserver/web/
