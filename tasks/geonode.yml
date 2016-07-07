@@ -143,7 +143,7 @@
   shell: >
     PYTHONPATH=. DJANGO_SETTINGS_MODULE={{main_module}}.settings
     {{virtualenv_dir}}/{{app_name}}/bin/python -c
-    "from geonode.people.models import Profile; Profile.objects.create_superuser('admin', 'admin@geonode.org', 'admin')"
+    "from geonode.people.models import Profile; Profile.objects.get_or_create(username='admin', password='admin', is_superuser=True)"
     chdir={{app_code_dir}}/{{app_name}}/{{main_module}}
 
 - name: wait for geoserver to be up
