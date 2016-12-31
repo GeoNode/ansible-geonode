@@ -18,7 +18,6 @@
     - python-virtualenv
     - postgresql-client-common
     - postgresql-client
-    - python-dev
     - python-imaging
     - python-lxml
     - python-pyproj
@@ -40,7 +39,6 @@
     - zip
     - libjpeg-dev
     - libpng-dev
-    - libxslt-dev
 
 
 - name: install known_hosts file to access GitHub
@@ -48,9 +46,7 @@
 
 - name: checkout latest web app code
   git: repo={{code_repository}} version={{app_name}} dest={{app_code_dir}}/{{app_name}}
-
-- name: copy the local_settings.py file in place
-  template: src=local_settings.py.j2 dest={{ app_code_dir}}/{{app_name}}/{{ app_name}}/local_settings.py
+  when: {{github_user}} != "geonode"
 
 - name: check if virtualenv already exists
   stat: path={{virtualenv_dir}}/{{app_name}}
@@ -59,6 +55,24 @@
 - name: create virtualenv for Django web application
   shell: virtualenv --system-site-packages {{virtualenv_dir}}/{{app_name}}
   when: venv_dir.stat.isdir is not defined
+
+- name: update pip in virtualenv to latest version
+  pip: name=pip
+       virtualenv={{virtualenv_dir}}/{{app_name}}
+       extra_args='-U'
+
+- name: install django to initialize the geonode-project template
+  pip: name=Django
+       version=1.8.7
+       virtualenv={{virtualenv_dir}}/{{app_name}}
+  when: {{github_user}} == "geonode"
+
+- name: checkout latest web app code from geonode-project template
+  shell: cd {{app_code_dir}} && {{virtualenv_dir}}/{{app_name}}/bin/django-admin.py startproject {{app_name}} --template=https://github.com/GeoNode/geonode-project/archive/master.zip -epy,rst,yml -n Vagrantfile
+  when: {{github_user}} == "geonode"
+
+- name: copy the local_settings.py file in place
+  template: src=local_settings.py.j2 dest={{ app_code_dir}}/{{app_name}}/{{ app_name}}/local_settings.py
 
 - name: check if requirements file exists
   stat: path={{app_code_dir}}/{{app_name}}/shared/requirements.txt
