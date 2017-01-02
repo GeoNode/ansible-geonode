@@ -119,6 +119,10 @@
   file: path=/var/log/uwsgi state=directory mode=0775 owner=www-data group=www-data
   sudo: yes
 
+- name: create nginx log directory
+  file: path=/var/log/nginx state=directory mode=0775 owner=www-data group=www-data
+  sudo: yes
+
 - name: create {{db_metadata_instance}} db
   postgresql_db: name={{db_metadata_instance}}
                  encoding='UTF-8'
@@ -167,12 +171,12 @@
                  virtualenv={{virtualenv_dir}}/{{app_name}}
                  settings={{main_module}}.settings
 
-- name: Create superuser
-  shell: >
-    PYTHONPATH=. DJANGO_SETTINGS_MODULE={{main_module}}.settings
-    {{virtualenv_dir}}/{{app_name}}/bin/python -c
-    "from geonode.people.models import Profile; Profile.objects.get_or_create(username='admin', password='admin', is_superuser=True)"
-    chdir={{app_code_dir}}/{{app_name}}/{{main_module}}
+# - name: Create superuser
+#   shell: >
+#     PYTHONPATH=. DJANGO_SETTINGS_MODULE={{main_module}}.settings
+#     {{virtualenv_dir}}/{{app_name}}/bin/python -c
+#     "from geonode.people.models import Profile; Profile.objects.get_or_create(username='admin', password='admin', is_superuser=True)"
+#     chdir={{app_code_dir}}/{{app_name}}/{{main_module}}
 
 - name: wait for geoserver to be up
   shell: curl --head --silent http://localhost:8080/geoserver/web/
@@ -182,7 +186,7 @@
   delay: 60
 
 - name: Copy create_db_store script in place
-  template: src=create_db_store.py.j2 dest={{ app_code_dir}}/{{app_name}}/create_db_store.py
+  template: src=create_db_store.py.j2 dest={{app_code_dir}}/{{app_name}}/create_db_store.py
 
 - name: create the db datastore in geoserver
-  command: "{{virtualenv_dir}}/{{app_name}}/bin/python {{ app_code_dir}}/{{app_name}}/create_db_store.py" 
+  command: "{{virtualenv_dir}}/{{app_name}}/bin/python {{app_code_dir}}/{{app_name}}/create_db_store.py"
