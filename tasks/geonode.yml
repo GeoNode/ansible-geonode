@@ -46,7 +46,7 @@
 
 - name: checkout latest web app code
   git: repo={{code_repository}} version={{app_name}} dest={{app_code_dir}}/{{app_name}}
-  when: {{github_user}} != "geonode"
+  when: github_user != "geonode"
 
 - name: check if virtualenv already exists
   stat: path={{virtualenv_dir}}/{{app_name}}
@@ -65,14 +65,18 @@
   pip: name=Django
        version=1.8.7
        virtualenv={{virtualenv_dir}}/{{app_name}}
-  when: {{github_user}} == "geonode"
+  when: github_user == "geonode"
+
+- name: check if project template already exists
+  stat: path={{app_code_dir}}/{{app_name}}
+  register: app_dir
 
 - name: checkout latest web app code from geonode-project template
   shell: cd {{app_code_dir}} && {{virtualenv_dir}}/{{app_name}}/bin/django-admin.py startproject {{app_name}} --template=https://github.com/GeoNode/geonode-project/archive/master.zip -epy,rst,yml -n Vagrantfile
-  when: {{github_user}} == "geonode"
+  when: github_user == "geonode" and (app_dir.stat.isdir is not defined)
 
 - name: copy the local_settings.py file in place
-  template: src=local_settings.py.j2 dest={{ app_code_dir}}/{{app_name}}/{{ app_name}}/local_settings.py
+  template: src=local_settings.py.j2 dest={{app_code_dir}}/{{app_name}}/{{app_name}}/local_settings.py
 
 - name: check if requirements file exists
   stat: path={{app_code_dir}}/{{app_name}}/shared/requirements.txt
