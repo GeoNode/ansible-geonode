@@ -11,12 +11,12 @@
   apt: pkg={{ item }} state=present
   sudo: yes
   with_items:
-   - tomcat7 
+   - tomcat8
 
 - name: Download Geoserver (remote)
   sudo: yes
   get_url:
-    dest=/var/lib/tomcat7/webapps/geoserver.war
+    dest=/var/lib/tomcat8/webapps/geoserver.war
     url={{ geoserver_url }}
     owner=0
     group=0
