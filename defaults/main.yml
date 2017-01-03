@@ -12,10 +12,14 @@ app_name: my_geonode
 # a geonode project template from scratch (demo mode)
 github_user: GeoNode
 
-# remote git repository to pull application code from, for example:
-code_repository: "https://github.com/{{ github_user }}/{{ app_name }}.git"
+# git repository name
+# defaults to the application name, but should be overriden if diffent
+repo_name: my_geonode
 
-# TODO: Allow for branch name
+# remote git repository to pull application code from, for example:
+code_repository: "https://github.com/{{ github_user }}/{{ repo_name }}.git"
+
+# git branch name. Defaults to master
 branch_name: master
 
 # Server name for nginx.
