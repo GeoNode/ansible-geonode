@@ -10,7 +10,7 @@ app_name: my_geonode
 # github user who owns the repository
 # if "geonode" is provided as a github user, this ansible role will create
 # a geonode project template from scratch (demo mode)
-github_user: jj0hns0n
+github_user: GeoNode
 
 # remote git repository to pull application code from, for example:
 code_repository: "https://github.com/{{ github_user }}/{{ app_name }}.git"

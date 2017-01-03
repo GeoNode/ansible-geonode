@@ -6,7 +6,9 @@ This Ansible Role will install GeoNode and required dependencies onto an Ubuntu 
 Requirements
 ------------
 
-In order to use this project, you will need to create and activate a virtualenv, pip install geonode, clone the template project, push your changes to github and update the Role Variables.
+There are two options in order to use this project:
+* You will need to create and activate a virtualenv, pip install geonode, clone the template project, push your changes to github and update the Role Variables.
+* Alternativelly, if you use "GeoNode" as the github_user variable, this Role will clone and install the empty GeoNode template project for you (this is meant to be a demonstration-only setup, for production setup use the first option).
 
 Role Variables
 --------------
@@ -39,9 +41,9 @@ The following is an example playbook using variables. This playbook will be incl
         remote_user: ubuntu
         vars:
             app_name: my_geonode
-            github_user: jj0hns0n 
+            github_user: GeoNode
         roles:
-            - { role: ortelius.geonode }
+            - { role: GeoNode.geonode }
 
 License
 -------
