@@ -45,7 +45,7 @@
   copy: src=known_hosts dest={{ssh_dir}}/known_hosts
 
 - name: checkout latest web app code
-  git: repo={{code_repository}} version={{app_name}} dest={{app_code_dir}}/{{app_name}}
+  git: repo={{code_repository}} version={{branch_name}} dest={{app_code_dir}}/{{app_name}}
   when: github_user != "GeoNode"
 
 - name: check if virtualenv already exists
