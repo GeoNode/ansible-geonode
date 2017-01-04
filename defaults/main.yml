@@ -14,7 +14,7 @@ github_user: GeoNode
 
 # git repository name
 # defaults to the application name, but should be overriden if diffent
-repo_name: my_geonode
+repo_name: "{{ app_name }}"
 
 # remote git repository to pull application code from, for example:
 code_repository: "https://github.com/{{ github_user }}/{{ repo_name }}.git"
