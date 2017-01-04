@@ -78,6 +78,10 @@
 - name: copy the local_settings.py file in place
   template: src=local_settings.py.j2 dest={{app_code_dir}}/{{app_name}}/{{app_name}}/local_settings.py
 
+- name: patch the settings.py file in place
+  shell: sed -i -e "s/ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', \['localhost', \])/ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', \['localhost', '{{ server_name }}'\])/g" {{app_code_dir}}/{{app_name}}/{{app_name}}/settings.py
+  when: github_user != "GeoNode"
+
 - name: check if requirements file exists
   stat: path={{app_code_dir}}/{{app_name}}/requirements.txt
   register: requirements_file
