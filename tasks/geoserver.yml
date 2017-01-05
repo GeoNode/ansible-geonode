@@ -24,15 +24,43 @@
 
 - name: Wait for GeoServer to be unpacked
   wait_for:
-    path: /var/lib/tomcat8/webapps/geoserver/data/geogig/config/security/logstore.properties
+    path: /var/lib/tomcat8/webapps/geoserver/data/global.xml
+
+- name: check if logstore file exists
+  stat: path=/var/lib/tomcat8/webapps/geoserver/data/geogig/config/security/logstore.properties
+  register: logstore_file
 
 - name: Adding SQLite logstore setting
   sudo: yes
+  when: logstore_file.stat.exists
   lineinfile:
     dest: "/var/lib/tomcat8/webapps/geoserver/data/geogig/config/security/logstore.properties"
     regexp: "^url="
     line: "url=jdbc:sqlite://var/lib/tomcat8/webapps/geoserver/data/geogig/config/security/securitylogs.db"
     state: "present"
+
+- name: check if geonode-oauth file exists
+  stat: path=/var/lib/tomcat8/webapps/geoserver/data/security/filter/geonode-oauth2/config.xml
+  register: geonode_oauth_file
+
+- name: patch the geonode-oauth file (geoserver part)
+  sudo: yes
+  shell: sed -i -e "s|http://localhost:8080|http://{{ server_name }}|g" /var/lib/tomcat8/webapps/geoserver/data/security/filter/geonode-oauth2/config.xml
+  when: geonode_oauth_file.stat.exists
+
+- name: patch the geonode-oauth file (geonode part)
+  sudo: yes
+  shell: sed -i -e "s|http://localhost:8000|http://{{ server_name }}|g" /var/lib/tomcat8/webapps/geoserver/data/security/filter/geonode-oauth2/config.xml
+  when: geonode_oauth_file.stat.exists
+
+- name: check if geonode-role file exists
+  stat: path=/var/lib/tomcat8/webapps/geoserver/data/security/role/geonode\ REST\ role\ service/config.xml
+  register: geonode_role_file
+
+- name: patch the geonode-role file
+  sudo: yes
+  shell: sed -i -e "s|http://localhost:8000|http://{{ server_name }}|g" /var/lib/tomcat8/webapps/geoserver/data/security/role/geonode\ REST\ role\ service/config.xml
+  when: geonode_role_file.stat.exists
 
 - name: Restarting Tomcat
   sudo: yes
