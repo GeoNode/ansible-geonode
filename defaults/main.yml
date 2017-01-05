@@ -66,4 +66,4 @@ site_url: "{{ app_name }}"
 
 ssh_dir: ~/.ssh/
 
-geoserver_url: http://build.geonode.org/geoserver/latest/geoserver.war
+geoserver_url: http://build.geonode.org/geoserver/latest/geoserver-2.9.x-oauth2.war

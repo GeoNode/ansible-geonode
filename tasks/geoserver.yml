@@ -13,7 +13,7 @@
   with_items:
    - tomcat8
 
-- name: Download Geoserver (remote)
+- name: Download GeoServer (remote)
   sudo: yes
   get_url:
     dest=/var/lib/tomcat8/webapps/geoserver.war
@@ -21,3 +21,17 @@
     owner=0
     group=0
     mode=0644
+
+- name: Wait for GeoServer to be unpacked
+  wait_for:
+    path: /var/lib/tomcat8/webapps/geoserver/data/geogig/config/security/logstore.properties
+
+- name: Adding SQLite logstore setting
+  sudo: yes
+  lineinfile:
+    dest: "/var/lib/tomcat8/webapps/geoserver/data/geogig/config/security/logstore.properties"
+    regexp: "^url="
+    line: "url=jdbc:sqlite://var/lib/tomcat8/webapps/geoserver/data/geogig/config/security/securitylogs.db"
+    state: "present"
+  notify:
+    - restart tomcat
