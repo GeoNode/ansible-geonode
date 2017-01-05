@@ -9,3 +9,6 @@
   service: name=uwsgi-emperor state=restarted
   sudo: yes
 
+- name: restart tomcat
+  service: name=tomcat8 state=restarted
+  sudo: yes
