@@ -11,7 +11,7 @@ log-date = true
 vacuum = true
 
 ; project-level logging to the logs/ folder
-logto = /var/log/nginx/uwsgi-%n.log
+logto = /var/log/uwsgi/uwsgi-%n.log
 
 chdir = {{app_code_dir}}/%n
 module = {{main_module}}.wsgi

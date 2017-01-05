@@ -44,9 +44,13 @@
 - name: install known_hosts file to access GitHub
   copy: src=known_hosts dest={{ssh_dir}}/known_hosts
 
+- name: check if project template already exists
+  stat: path={{app_code_dir}}/{{app_name}}
+  register: app_dir
+
 - name: checkout latest web app code
   git: repo={{code_repository}} version={{branch_name}} dest={{app_code_dir}}/{{app_name}}
-  when: github_user != "GeoNode"
+  when: github_user != "GeoNode" and (app_dir.stat.isdir is not defined)
 
 - name: check if virtualenv already exists
   stat: path={{virtualenv_dir}}/{{app_name}}
@@ -66,10 +70,6 @@
        version=1.8.7
        virtualenv={{virtualenv_dir}}/{{app_name}}
   when: github_user == "GeoNode"
-
-- name: check if project template already exists
-  stat: path={{app_code_dir}}/{{app_name}}
-  register: app_dir
 
 - name: checkout latest web app code from geonode-project template
   shell: cd {{app_code_dir}} && {{virtualenv_dir}}/{{app_name}}/bin/django-admin.py startproject {{app_name}} --template=https://github.com/GeoNode/geonode-project/archive/master.zip -epy,rst,yml -n Vagrantfile
@@ -96,23 +96,23 @@
        extra_args='-e'
 
 - name: create static directory for Django app if it does not exist
-  file: path=/var/www/{{app_name}}/static state=directory mode=0775 owner=www-data group=www-data
+  file: path=/var/www/{{app_name}}/static state=directory mode=0777 owner=www-data group=www-data
   sudo: yes
 
 - name: create uploaded directory for Django app if it does not exist
-  file: path=/var/www/{{app_name}}/uploaded state=directory mode=0775 owner=www-data group=www-data
+  file: path=/var/www/{{app_name}}/uploaded state=directory mode=0777 owner=www-data group=www-data
   sudo: yes
 
 - name: create uploaded/layers directory for Django app if it does not exist
-  file: path=/var/www/{{app_name}}/uploaded/layers/ state=directory mode=0775 owner=www-data group=www-data
+  file: path=/var/www/{{app_name}}/uploaded/layers/ state=directory mode=0777 owner=www-data group=www-data
   sudo: yes
 
 - name: create uploaded/thumbs directory for Django app if it does not exist
-  file: path=/var/www/{{app_name}}/uploaded/thumbs/ state=directory mode=0775 owner=www-data group=www-data
+  file: path=/var/www/{{app_name}}/uploaded/thumbs/ state=directory mode=0777 owner=www-data group=www-data
   sudo: yes
 
 - name: create uploaded/avatars directory for Django app if it does not exist
-  file: path=/var/www/{{app_name}}/uploaded/avatars/ state=directory mode=0775 owner=www-data group=www-data
+  file: path=/var/www/{{app_name}}/uploaded/avatars/ state=directory mode=0777 owner=www-data group=www-data
   sudo: yes
 
 - name: rename the vassals-default.ini file to the app name 
@@ -120,11 +120,11 @@
   sudo: yes
 
 - name: create uwsgi log directory
-  file: path=/var/log/uwsgi state=directory mode=0775 owner=www-data group=www-data
+  file: path=/var/log/uwsgi state=directory mode=0777 owner=www-data group=www-data
   sudo: yes
 
 - name: create nginx log directory
-  file: path=/var/log/nginx state=directory mode=0775 owner=www-data group=www-data
+  file: path=/var/log/nginx state=directory mode=0777 owner=www-data group=www-data
   sudo: yes
 
 - name: create {{db_metadata_instance}} db
@@ -175,13 +175,6 @@
                  virtualenv={{virtualenv_dir}}/{{app_name}}
                  settings={{main_module}}.settings
 
-# - name: Create superuser
-#   shell: >
-#     PYTHONPATH=. DJANGO_SETTINGS_MODULE={{main_module}}.settings
-#     {{virtualenv_dir}}/{{app_name}}/bin/python -c
-#     "from geonode.people.models import Profile; Profile.objects.get_or_create(username='admin', password='admin', is_superuser=True)"
-#     chdir={{app_code_dir}}/{{app_name}}/{{main_module}}
-
 - name: wait for geoserver to be up
   shell: curl --head --silent http://localhost:8080/geoserver/web/
   register: result
@@ -194,3 +187,23 @@
 
 - name: create the db datastore in geoserver
   command: "{{virtualenv_dir}}/{{app_name}}/bin/python {{app_code_dir}}/{{app_name}}/create_db_store.py"
+
+- name: Copy super user fixture in place
+  template: src=sample_admin.json.j2 dest={{app_code_dir}}/{{app_name}}/sample_admin.json
+
+- name: Load super user fixture
+  django_manage: command="loaddata {{app_code_dir}}/{{app_name}}/sample_admin.json"
+                 app_path={{app_code_dir}}/{{app_name}}
+                 virtualenv={{virtualenv_dir}}/{{app_name}}
+                 settings={{main_module}}.settings
+
+- name: Copy oauth fixture in place
+  template: src=default_oauth_apps.json.j2 dest={{app_code_dir}}/{{app_name}}/default_oauth_apps.json
+  when: geonode_oauth_file.stat.exists
+
+- name: Load oAuth fixture
+  when: geonode_oauth_file.stat.exists
+  django_manage: command="loaddata {{app_code_dir}}/{{app_name}}/default_oauth_apps.json"
+                 app_path={{app_code_dir}}/{{app_name}}
+                 virtualenv={{virtualenv_dir}}/{{app_name}}
+                 settings={{main_module}}.settings
