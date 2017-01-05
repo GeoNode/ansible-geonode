@@ -13,7 +13,7 @@
   with_items:
    - tomcat8
 
-- name: Download GeoServer (remote)
+- name: download GeoServer (remote)
   sudo: yes
   get_url:
     dest=/var/lib/tomcat8/webapps/geoserver.war
@@ -22,7 +22,7 @@
     group=0
     mode=0644
 
-- name: Wait for GeoServer to be unpacked
+- name: wait for GeoServer to be unpacked
   wait_for:
     path: /var/lib/tomcat8/webapps/geoserver/data/global.xml
 
@@ -30,7 +30,7 @@
   stat: path=/var/lib/tomcat8/webapps/geoserver/data/geogig/config/security/logstore.properties
   register: logstore_file
 
-- name: Adding SQLite logstore setting
+- name: adding sqlite logstore setting
   sudo: yes
   when: logstore_file.stat.exists
   lineinfile:
@@ -62,7 +62,7 @@
   shell: sed -i -e "s|http://localhost:8000|http://{{ server_name }}|g" /var/lib/tomcat8/webapps/geoserver/data/security/role/geonode\ REST\ role\ service/config.xml
   when: geonode_role_file.stat.exists
 
-- name: Restarting Tomcat
+- name: restarting Tomcat
   sudo: yes
   service:
     name: tomcat8
