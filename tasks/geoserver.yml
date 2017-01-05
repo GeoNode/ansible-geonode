@@ -33,5 +33,9 @@
     regexp: "^url="
     line: "url=jdbc:sqlite://var/lib/tomcat8/webapps/geoserver/data/geogig/config/security/securitylogs.db"
     state: "present"
-  notify:
-    - restart tomcat
+
+- name: Restarting Tomcat
+  sudo: yes
+  service:
+    name: tomcat8
+    state: restarted
