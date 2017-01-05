@@ -175,13 +175,6 @@
                  virtualenv={{virtualenv_dir}}/{{app_name}}
                  settings={{main_module}}.settings
 
-# - name: Create superuser
-#   shell: >
-#     PYTHONPATH=. DJANGO_SETTINGS_MODULE={{main_module}}.settings
-#     {{virtualenv_dir}}/{{app_name}}/bin/python -c
-#     "from geonode.people.models import Profile; Profile.objects.get_or_create(username='admin', password='admin', is_superuser=True)"
-#     chdir={{app_code_dir}}/{{app_name}}/{{main_module}}
-
 - name: wait for geoserver to be up
   shell: curl --head --silent http://localhost:8080/geoserver/web/
   register: result
@@ -194,3 +187,23 @@
 
 - name: create the db datastore in geoserver
   command: "{{virtualenv_dir}}/{{app_name}}/bin/python {{app_code_dir}}/{{app_name}}/create_db_store.py"
+
+- name: Copy super user fixture in place
+  template: src=sample_admin.json.j2 dest={{app_code_dir}}/{{app_name}}/sample_admin.json
+
+- name: Load super user fixture
+  django_manage: command="loaddata {{app_code_dir}}/{{app_name}}/sample_admin.json"
+                 app_path={{app_code_dir}}/{{app_name}}
+                 virtualenv={{virtualenv_dir}}/{{app_name}}
+                 settings={{main_module}}.settings
+
+- name: Copy oauth fixture in place
+  template: src=default_oauth_apps.json.j2 dest={{app_code_dir}}/{{app_name}}/default_oauth_apps.json
+  when: geonode_oauth_file.stat.exists
+
+- name: Load oAuth fixture
+  when: geonode_oauth_file.stat.exists
+  django_manage: command="loaddata {{app_code_dir}}/{{app_name}}/default_oauth_apps.json"
+                 app_path={{app_code_dir}}/{{app_name}}
+                 virtualenv={{virtualenv_dir}}/{{app_name}}
+                 settings={{main_module}}.settings
