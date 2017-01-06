@@ -115,6 +115,10 @@
   file: path=/var/www/{{app_name}}/uploaded/avatars/ state=directory mode=0777 owner=www-data group=www-data
   sudo: yes
 
+- name: create uploaded/documents directory for Django app if it does not exist
+  file: path=/var/www/{{app_name}}/uploaded/documents/ state=directory mode=0777 owner=www-data group=www-data
+  sudo: yes
+
 - name: rename the vassals-default.ini file to the app name 
   file: src=/etc/uwsgi-emperor/vassals/vassals-default.skel dest=/etc/uwsgi-emperor/vassals/{{app_name}}.ini owner=www-data group=www-data state=link
   sudo: yes
@@ -171,10 +175,10 @@
                  virtualenv={{virtualenv_dir}}/{{app_name}}
                  settings={{main_module}}.settings
   with_items:
-    - people
-    - sites
     - auth
     - account
+    - people
+    - sites
     - layers
     - documents
     - admin
