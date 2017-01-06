@@ -13,6 +13,13 @@
   with_items:
    - tomcat8
 
+- name: increase catalina memory size
+  sudo: yes
+  lineinfile:
+    dest: /etc/default/tomcat8
+    regexp: '^\s*JAVA_OPTS\s*=.*$'
+    line: 'JAVA_OPTS="-Djava.awt.headless=true -Xms1024M -Xmx2096M -XX:MaxPermSize=1024m -XX:PermSize=512m -XX:+UseConcMarkSweepGC"'
+
 - name: download GeoServer (remote)
   sudo: yes
   get_url:
@@ -25,6 +32,19 @@
 - name: wait for GeoServer to be unpacked
   wait_for:
     path: /var/lib/tomcat8/webapps/geoserver/data/global.xml
+
+- name: remove masterpw.info file to remove security risk warning
+  sudo: yes
+  file:
+    path: /var/lib/tomcat8/webapps/geoserver/data/security/masterpw.info
+    state: absent
+
+- name: set digest password encoding
+  sudo: yes
+  lineinfile:
+    dest: /var/lib/tomcat8/webapps/geoserver/data/security/usergroup/default/config.xml
+    regexp: '\s*<passwordEncoderName>.*'
+    line: '  <passwordEncoderName>digestPasswordEncoder</passwordEncoderName>'
 
 - name: check if logstore file exists
   stat: path=/var/lib/tomcat8/webapps/geoserver/data/geogig/config/security/logstore.properties
