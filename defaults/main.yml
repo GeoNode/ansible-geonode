@@ -68,3 +68,4 @@ requirements_file: "{{app_code_dir}}/requirements.txt"
 ssh_dir: ~/.ssh/
 
 geoserver_url: http://build.geonode.org/geoserver/latest/geoserver-2.9.x-oauth2.war
+geoserver_data_url: http://build.geonode.org/geoserver/latest/data-2.9.x-oauth2.zip
