@@ -163,6 +163,28 @@
                  virtualenv={{virtualenv_dir}}/{{app_name}}
                  settings={{main_module}}.settings
 
+- name: Django migrate specific modules
+  when: github_user == "GeoNode"
+  ignore_errors: yes
+  django_manage: command="migrate {{item}}"
+                 app_path={{app_code_dir}}/{{app_name}}
+                 virtualenv={{virtualenv_dir}}/{{app_name}}
+                 settings={{main_module}}.settings
+  with_items:
+    - people
+    - sites
+    - auth
+    - account
+    - layers
+    - documents
+    - admin
+
+- name: Django migrate
+  django_manage: command=migrate
+                 app_path={{app_code_dir}}/{{app_name}}
+                 virtualenv={{virtualenv_dir}}/{{app_name}}
+                 settings={{main_module}}.settings
+
 - name: Django syncdb
   django_manage: command=syncdb
                  app_path={{app_code_dir}}/{{app_name}}
@@ -197,12 +219,16 @@
                  virtualenv={{virtualenv_dir}}/{{app_name}}
                  settings={{main_module}}.settings
 
+- name: check if oauth configuration exists
+  stat: path=/var/lib/tomcat8/webapps/geoserver/data/security/filter/geonode-oauth2/config.xml
+  register: geonode_oauth_config
+
 - name: Copy oauth fixture in place
   template: src=default_oauth_apps.json.j2 dest={{app_code_dir}}/{{app_name}}/default_oauth_apps.json
-  when: geonode_oauth_file.stat.exists
+  when: geonode_oauth_config.stat.exists
 
 - name: Load oAuth fixture
-  when: geonode_oauth_file.stat.exists
+  when: geonode_oauth_config.stat.exists
   django_manage: command="loaddata {{app_code_dir}}/{{app_name}}/default_oauth_apps.json"
                  app_path={{app_code_dir}}/{{app_name}}
                  virtualenv={{virtualenv_dir}}/{{app_name}}
