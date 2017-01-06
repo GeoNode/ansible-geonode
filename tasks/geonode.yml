@@ -45,7 +45,8 @@
   copy: src=known_hosts dest={{ssh_dir}}/known_hosts
 
 - name: check if project template already exists
-  stat: path={{app_code_dir}}/{{app_name}}
+  stat:
+    path: "{{app_code_dir}}/{{app_name}}"
   register: app_dir
 
 - name: checkout latest web app code
@@ -53,7 +54,8 @@
   when: github_user != "GeoNode" and (app_dir.stat.isdir is not defined)
 
 - name: check if virtualenv already exists
-  stat: path={{virtualenv_dir}}/{{app_name}}
+  stat:
+    path: "{{virtualenv_dir}}/{{app_name}}"
   register: venv_dir
 
 - name: create virtualenv for Django web application
@@ -83,7 +85,8 @@
   when: github_user != "GeoNode"
 
 - name: check if requirements file exists
-  stat: path={{app_code_dir}}/{{app_name}}/requirements.txt
+  stat:
+    path: "{{app_code_dir}}/{{app_name}}/requirements.txt"
   register: requirements_file
 
 - name: install web application dependencies listed in requirements.txt
@@ -224,7 +227,8 @@
                  settings={{main_module}}.settings
 
 - name: check if oauth configuration exists
-  stat: path=/var/lib/tomcat8/webapps/geoserver/data/security/filter/geonode-oauth2/config.xml
+  stat:
+    path: /var/lib/tomcat8/webapps/geoserver/data/security/filter/geonode-oauth2/config.xml
   register: geonode_oauth_config
 
 - name: Copy oauth fixture in place

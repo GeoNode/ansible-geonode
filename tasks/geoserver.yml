@@ -77,7 +77,8 @@
     state: absent
 
 - name: check if logstore file exists
-  stat: path=/var/lib/tomcat8/webapps/geoserver/data/geogig/config/security/logstore.properties
+  stat:
+    path: /var/lib/tomcat8/webapps/geoserver/data/geogig/config/security/logstore.properties
   register: logstore_file
 
 - name: adding sqlite logstore setting
@@ -90,7 +91,8 @@
     state: "present"
 
 - name: check if geonode-oauth file exists
-  stat: path=/var/lib/tomcat8/webapps/geoserver/data/security/filter/geonode-oauth2/config.xml
+  stat:
+    path: /var/lib/tomcat8/webapps/geoserver/data/security/filter/geonode-oauth2/config.xml
   register: geonode_oauth_file
 
 - name: patch the geonode-oauth file (geoserver part)
@@ -104,7 +106,8 @@
   when: geonode_oauth_file.stat.exists
 
 - name: check if geonode-role file exists
-  stat: path=/var/lib/tomcat8/webapps/geoserver/data/security/role/geonode\ REST\ role\ service/config.xml
+  stat:
+    path: /var/lib/tomcat8/webapps/geoserver/data/security/role/geonode\ REST\ role\ service/config.xml
   register: geonode_role_file
 
 - name: patch the geonode-role file
