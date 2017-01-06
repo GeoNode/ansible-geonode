@@ -164,6 +164,12 @@
   sudo: yes
   sudo_user: postgres
 
+- name: make manage.py executable
+  sudo: yes
+  file:
+    path: "{{app_code_dir}}/{{app_name}}/manage.py"
+    mode: 0755
+
 - name: Django makemigrations
   django_manage: command=makemigrations
                  app_path={{app_code_dir}}/{{app_name}}
