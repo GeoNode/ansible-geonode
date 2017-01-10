@@ -2,6 +2,9 @@
 ;unix socket (referenced in nginx configuration)
 socket = /tmp/%n.sock
 
+processes = 4
+max_request = 300
+
 # set mode of created UNIX socket
 chmod-socket = 666
 
