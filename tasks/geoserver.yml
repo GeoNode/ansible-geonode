@@ -110,6 +110,11 @@
   shell: sed -i -e "s|http://localhost:8000|http://{{ server_name }}|g" /var/lib/tomcat8/webapps/geoserver/data/security/role/geonode\ REST\ role\ service/config.xml
   when: geonode_oauth_file.stat.exists
 
+- name: patch the geoserver global config file
+  sudo: yes
+  shell: sed -i -e "s|http://localhost:8080|http://{{ server_name }}|g" /var/lib/tomcat8/webapps/geoserver/data/global.xml
+  when: geonode_oauth_file.stat.exists
+
 - name: remove masterpw.info file to remove security risk warning
   sudo: yes
   file:
