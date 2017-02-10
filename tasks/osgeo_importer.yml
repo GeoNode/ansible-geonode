@@ -29,7 +29,30 @@
 
 - name: install django-osgeo-importer
   pip: name=django-osgeo-importer
-       version=0.1.1a1
+       version=0.1.1a2
        virtualenv={{virtualenv_dir}}/{{app_name}}
 
+## Add settings.py and urls.py stuff here
 
+- name: make manage.py executable
+  sudo: yes
+  file:
+    path: "{{app_code_dir}}/{{app_name}}/manage.py"
+    mode: 0755
+
+- name: run migrations to include the importer tables
+  django_manage: command=migrate
+                 app_path={{app_code_dir}}/{{app_name}}
+                 virtualenv={{virtualenv_dir}}/{{app_name}}
+                 settings={{main_module}}.settings
+
+- name: copy the celery systemd service file in place
+  template: src=celery.service.j2 dest=/lib/systemd/system/celery.service
+
+- name: enable celery service
+  systemd: state=enabled name=celery daemon_reload=yes
+
+- name: start celery service
+  systemd: state=started name=celery
+
+## Setup MapProxy here
