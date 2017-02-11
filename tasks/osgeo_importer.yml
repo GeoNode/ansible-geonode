@@ -117,38 +117,3 @@
                  app_path={{app_code_dir}}/{{app_name}}
                  virtualenv={{virtualenv_dir}}/{{app_name}}
                  settings={{main_module}}.settings
-
-- name: copy the celery systemd service file in place
-  sudo: yes
-  template: src=celery.service.j2 dest=/lib/systemd/system/celery.service
-
-- name: enable and start celery service
-  sudo: yes
-  service:
-    name: celery
-    state: started
-    enabled: yes
-
-- name: install mapproxy
-  pip:
-    name: git+https://github.com/mapproxy/mapproxy.git@07552da8#egg=MapProxy
-    virtualenv: "{{virtualenv_dir}}/{{app_name}}"
-
-- name: copy the mapproxy systemd service file in place
-  sudo: yes
-  template: src=mapproxy.service.j2 dest=/lib/systemd/system/mapproxy.service
-
-- name: create mapproxy configuration folder
-  file: path=/opt/geonode-mapproxy-config/ state=directory mode=0755 owner={{deploy_user}} group={{deploy_user}}
-  sudo: yes
-
-- name: copy the mapproxy configuration file
-  sudo: yes
-  template: src=geonode.yaml.j2 dest=/opt/geonode-mapproxy-config/geonode.yaml
-
-- name: enable and start mapproxy service
-  sudo: yes
-  service:
-    name: mapproxy
-    state: started
-    enabled: yes

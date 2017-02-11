@@ -125,14 +125,24 @@
 - name: rename the vassals-default.ini file to the app name 
   file: src=/etc/uwsgi-emperor/vassals/vassals-default.skel dest=/etc/uwsgi-emperor/vassals/{{app_name}}.ini owner=www-data group=www-data state=link
   sudo: yes
+  when: not apache
 
 - name: create uwsgi log directory
   file: path=/var/log/uwsgi state=directory mode=0777 owner=www-data group=www-data
   sudo: yes
+  when: not apache
 
 - name: create nginx log directory
   file: path=/var/log/nginx state=directory mode=0777 owner=www-data group=www-data
   sudo: yes
+  when: not apache
+
+- name: make wsgi.py executable
+  sudo: yes
+  file:
+    path: "{{app_code_dir}}/{{app_name}}/{{app_name}}/wsgi.py"
+    mode: 0755
+  when: apache
 
 - name: create {{db_metadata_instance}} db
   postgresql_db: name={{db_metadata_instance}}

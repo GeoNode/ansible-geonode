@@ -1,0 +1,40 @@
+###
+# Installs nginx 
+#
+---
+- name: ensure apt cache is up to date
+  apt: update_cache=yes 
+  sudo: yes
+
+- name: ensure apache packages are installed
+  apt: name={{item}}
+  sudo: yes
+  with_items:
+    - apache2
+    - libapache2-mod-wsgi
+
+- name: write apache configuration
+  template: src=geonode.conf.j2 dest=/etc/apache2/sites-available/geonode.conf
+  sudo: yes
+
+- name: enable proxy apache module
+  shell: a2enmod proxy
+  sudo: yes
+  when: apache
+
+- name: enable proxy_http apache module
+  shell: a2enmod proxy_http
+  sudo: yes
+  when: apache
+
+- name: enable headers apache module
+  shell: a2enmod headers
+  sudo: yes
+  when: apache
+
+- name: enable geonode apache module
+  shell: a2ensite geonode
+  sudo: yes
+  when: apache
+  notify:
+    - restart apache
