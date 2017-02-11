@@ -1,0 +1,26 @@
+caches:
+  DUMMY_cache:
+    cache: {
+      filename: /tmp/nogpkghere,
+      table_name: notablehere,
+      type: geopackage
+    }
+    grids: [DUMMY_grid]
+    sources: []
+grids:
+  DUMMY_grid:
+    bbox: [-180.0, -90.0, 180.0, 90.0]
+    origin: nw
+    res: [0.703125, 0.3515625,]
+    srs: EPSG:4326
+    tile_size: [256, 256]
+layers:
+- name: DUMMY_layer
+  sources: [DUMMY_cache]
+  title: DUMMY LAYER
+services:
+  demo: null
+  kml: {use_grid_names: true}
+  tms: {origin: nw, use_grid_names: true}
+  wms: null
+  wmts: null
