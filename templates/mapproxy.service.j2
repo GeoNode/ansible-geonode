@@ -1,0 +1,15 @@
+[Unit]
+Description=Mapproxy instance to serve tiles imported into geonode.
+
+[Service]
+Restart=always
+User={{deploy_user}}
+Group={{deploy_user}}
+WorkingDirectory=/opt/geonode-mapproxy-config/
+#Environment="PYTHONPATH={{app_code_dir}}/{{app_name}}"
+ExecStartPre=source {{virtualenv_dir}}/{{app_name}}/bin/activate
+ExecStart={{virtualenv_dir}}/{{app_name}}/bin/mapproxy-util serve-develop -b 0.0.0.0:8088 /opt/geonode-mapproxy-config/geonode.yaml
+
+[Install]
+WantedBy=local.target
+

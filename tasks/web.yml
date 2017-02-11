@@ -7,3 +7,5 @@
 - include: nginx.yml
 - include: uwsgi.yml
 - include: geonode.yml
+- include: osgeo_importer.yml
+  when: osgeo_importer
