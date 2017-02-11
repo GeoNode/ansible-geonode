@@ -1,0 +1,48 @@
+WSGIDaemonProcess geonode user=www-data threads=10 processes=1 python-home={{virtualenv_dir}}/{{app_name}}
+<VirtualHost *:80>
+    ServerName {{ server_name }}
+    ServerAdmin webmaster@{{ server_name }}
+
+    ErrorLog /var/log/apache2/error.log
+    LogLevel warn
+    CustomLog /var/log/apache2/access.log combined
+
+    WSGIProcessGroup geonode
+    WSGIPassAuthorization On
+    WSGIScriptAlias / {{app_code_dir}}/{{app_name}}/{{app_name}}/wsgi.py
+
+    <Directory "{{app_code_dir}}/{{app_name}}/{{app_name}}/">
+        Order allow,deny
+        Options Indexes FollowSymLinks
+        IndexOptions FancyIndexing
+        Allow from all
+        Require all granted
+    </Directory>
+
+    Alias /static/ /var/www/{{app_name}}/static/
+    Alias /uploaded/ /var/www/{{app_name}}/uploaded/
+
+    <Proxy *>
+      Order allow,deny
+      Allow from all
+    </Proxy>
+
+    ProxyPreserveHost On
+    ProxyPass /geoserver http://localhost:8080/geoserver
+    ProxyPassReverse /geoserver http://localhost:8080/geoserver
+    ProxyPass /mapproxy http://localhost:8088
+    ProxyPassReverse /mapproxy http://localhost:8088
+
+    <Location /mapproxy>
+        ProxyPass http://127.0.0.1:8088
+        ProxyPassReverse  http://127.0.0.1:8088
+        RequestHeader unset X-Script-Name
+        RequestHeader add X-Script-Name "/mapproxy"
+    </Location>
+
+    <Location /geoserver>
+        ProxyPass http://127.0.0.1:8080/geoserver
+        ProxyPassReverse http://127.0.0.1:8080/geoserver
+    </Location>
+
+</VirtualHost>

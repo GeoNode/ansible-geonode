@@ -1,0 +1,27 @@
+###
+# Pulls the code from Pypi
+#
+---
+- name: install mapproxy
+  pip:
+    name: git+https://github.com/mapproxy/mapproxy.git@07552da8#egg=MapProxy
+    virtualenv: "{{virtualenv_dir}}/{{app_name}}"
+
+- name: copy the mapproxy systemd service file in place
+  sudo: yes
+  template: src=mapproxy.service.j2 dest=/lib/systemd/system/mapproxy.service
+
+- name: create mapproxy configuration folder
+  file: path=/opt/geonode-mapproxy-config/ state=directory mode=0755 owner={{deploy_user}} group={{deploy_user}}
+  sudo: yes
+
+- name: copy the mapproxy configuration file
+  sudo: yes
+  template: src=geonode.yaml.j2 dest=/opt/geonode-mapproxy-config/geonode.yaml
+
+- name: enable and start mapproxy service
+  sudo: yes
+  service:
+    name: mapproxy
+    state: started
+    enabled: yes

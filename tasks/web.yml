@@ -5,7 +5,15 @@
 ---
 
 - include: nginx.yml
+  when: not apache
 - include: uwsgi.yml
+  when: not apache
+- include: apache.yml
+  when: apache
 - include: geonode.yml
 - include: osgeo_importer.yml
+  when: osgeo_importer
+- include: celery.yml
+  when: osgeo_importer
+- include: mapproxy.yml
   when: osgeo_importer
