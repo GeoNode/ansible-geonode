@@ -29,7 +29,7 @@
 
 - name: install django-osgeo-importer
   pip: name=django-osgeo-importer
-       version=0.1.1a2
+       version=0.1.1a3
        virtualenv={{virtualenv_dir}}/{{app_name}}
 
 - name: create uploaded/osgeo_importer_uploads directory for Django app if it does not exist
