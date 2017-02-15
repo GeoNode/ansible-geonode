@@ -7,8 +7,9 @@ User={{deploy_user}}
 Group={{deploy_user}}
 WorkingDirectory={{app_code_dir}}/{{app_name}}
 Environment="DJANGO_SETTINGS_MODULE={{app_name}}.settings" "PYTHONPATH={{app_code_dir}}/{{app_name}}"
-ExecStartPre=source {{virtualenv_dir}}/{{app_name}}/bin/activate
-ExecStart={{virtualenv_dir}}/{{app_name}}/bin/celery -A geonode.celery_app.app worker --loglevel=INFO --concurrency=8 -n worker-1
+ExecStart=/bin/bash -c '\
+    source {{virtualenv_dir}}/{{app_name}}/bin/activate; \
+    {{virtualenv_dir}}/{{app_name}}/bin/celery -A geonode.celery_app.app worker --loglevel=INFO --concurrency=8 -n worker-1'
 
 [Install]
 WantedBy=local.target
