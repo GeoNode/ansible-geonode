@@ -32,7 +32,7 @@ server {
     location /mapproxy/ {
         proxy_set_header Host $host/mapproxy;
         proxy_pass http://127.0.0.1:8088/;
-        add_header Access-Control-Allow-Origin "*";d
+        add_header Access-Control-Allow-Origin "*";
     }
 
 }
