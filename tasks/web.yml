@@ -13,7 +13,7 @@
 - include: geonode.yml
 - include: osgeo_importer.yml
   when: osgeo_importer
-- include: celery.yml
-  when: osgeo_importer
 - include: mapproxy.yml
+  when: osgeo_importer
+- include: celery.yml
   when: osgeo_importer
