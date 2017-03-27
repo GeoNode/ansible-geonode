@@ -17,3 +17,5 @@
   when: osgeo_importer
 - include: celery.yml
   when: osgeo_importer
+- include: letsencrypt.yml
+  when: letsencrypt

@@ -4,18 +4,47 @@
 #
 ---
 - name: ensure apt cache is up to date
+  become: yes
+  become_user: root
   apt: update_cache=yes
-  sudo: yes
 
-- name: ensure web server packages are installed
-  apt: name={{item}}
-  sudo: yes
+- name: install basic libraries
+  become: yes
+  become_user: root
+  apt: name="{{ item }}" state=latest
   with_items:
+    - vim
+    - curl # should be installed in pre_tasks
+    - make
     - git
+    - unzip # should be installed in pre_tasks
+    - zip
+
+- name: install core python libraries
+  become: yes
+  become_user: root
+  apt: name="{{ item }}" state=latest
+  with_items:
+    - python-software-properties
+    - build-essential
     - python-dev
     - python-pip
+    - python-apt
+
+- name: install python virtual environment libraries
+  become: yes
+  become_user: root
+  pip: name="{{ item }}" state=latest
+  with_items:
+    - virtualenv
+    - virtualenvwrapper
+
+- name: install other required libraries
+  become: yes
+  become_user: root
+  apt: name={{item}}
+  with_items:
     - libpq-dev
-    - python-virtualenv
     - postgresql-client-common
     - postgresql-client
     - python-imaging
@@ -26,20 +55,15 @@
     - python-nose
     - python-httplib2
     - python-psycopg2
-    - python-software-properties
     - gettext
-    - build-essential
     - libxml2-dev
     - libxslt1-dev
     - zlib1g-dev
     - gdal-bin
     - libgeos-dev
     - libproj-dev
-    - unzip
-    - zip
     - libjpeg-dev
     - libpng-dev
-
 
 - name: install known_hosts file to access GitHub
   copy: src=known_hosts dest={{ssh_dir}}/known_hosts
@@ -62,6 +86,17 @@
   shell: virtualenv --system-site-packages {{virtualenv_dir}}/{{app_name}}
   when: venv_dir.stat.isdir is not defined
 
+- name: add virtualenvwrapper environment variables
+  lineinfile:
+    dest: "~/.bash_aliases"
+    line: "{{ item }}"
+    create: "yes"
+  with_items:
+    - "export VIRTUALENVWRAPPER_PYTHON=/usr/bin/python"
+    - "export WORKON_HOME=~/.venvs"
+    - "source /usr/local/bin/virtualenvwrapper.sh"
+    - "export PIP_DOWNLOAD_CACHE=$HOME/.pip-downloads"
+
 - name: update pip in virtualenv to latest version
   pip: name=pip
        virtualenv={{virtualenv_dir}}/{{app_name}}
@@ -73,6 +108,11 @@
        virtualenv={{virtualenv_dir}}/{{app_name}}
   when: github_user == "GeoNode"
 
+- name: install bcrypt
+  pip:
+    name: "django[bcrypt]"
+    virtualenv: "{{virtualenv_dir}}/{{app_name}}"
+
 - name: checkout latest web app code from geonode-project template
   shell: cd {{app_code_dir}} && {{virtualenv_dir}}/{{app_name}}/bin/django-admin.py startproject {{app_name}} --template=https://github.com/GeoNode/geonode-project/archive/master.zip -epy,rst,yml -n Vagrantfile
   when: github_user == "GeoNode" and (app_dir.stat.isdir is not defined)
@@ -80,9 +120,10 @@
 - name: copy the local_settings.py file in place
   template: src=local_settings.py.j2 dest={{app_code_dir}}/{{app_name}}/{{app_name}}/local_settings.py
 
-- name: patch the settings.py file in place
-  shell: sed -i -e "s/ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', \['localhost', \])/ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', \['localhost', '{{ server_name }}'\])/g" {{app_code_dir}}/{{app_name}}/{{app_name}}/settings.py
-  when: github_user != "GeoNode"
+# Just in local_settings now
+#- name: patch the settings.py file in place
+#  shell: sed -i -e "s/ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', \['localhost', \])/ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', \['localhost', '{{ server_name }}'\])/g" {{app_code_dir}}/{{app_name}}/{{app_name}}/settings.py
+#  when: github_user != "GeoNode"
 
 - name: check if requirements file exists
   stat:
@@ -100,45 +141,45 @@
 
 - name: create static directory for Django app if it does not exist
   file: path=/var/www/{{app_name}}/static state=directory mode=0777 owner=www-data group=www-data
-  sudo: yes
+  become: yes
 
 - name: create uploaded directory for Django app if it does not exist
   file: path=/var/www/{{app_name}}/uploaded state=directory mode=0777 owner=www-data group=www-data
-  sudo: yes
+  become: yes
 
 - name: create uploaded/layers directory for Django app if it does not exist
   file: path=/var/www/{{app_name}}/uploaded/layers/ state=directory mode=0777 owner=www-data group=www-data
-  sudo: yes
+  become: yes
 
 - name: create uploaded/thumbs directory for Django app if it does not exist
   file: path=/var/www/{{app_name}}/uploaded/thumbs/ state=directory mode=0777 owner=www-data group=www-data
-  sudo: yes
+  become: yes
 
 - name: create uploaded/avatars directory for Django app if it does not exist
   file: path=/var/www/{{app_name}}/uploaded/avatars/ state=directory mode=0777 owner=www-data group=www-data
-  sudo: yes
+  become: yes
 
 - name: create uploaded/documents directory for Django app if it does not exist
   file: path=/var/www/{{app_name}}/uploaded/documents/ state=directory mode=0777 owner=www-data group=www-data
-  sudo: yes
+  become: yes
 
-- name: rename the vassals-default.ini file to the app name 
+- name: rename the vassals-default.ini file to the app name
   file: src=/etc/uwsgi-emperor/vassals/vassals-default.skel dest=/etc/uwsgi-emperor/vassals/{{app_name}}.ini owner=www-data group=www-data state=link
-  sudo: yes
+  become: yes
   when: not apache
 
 - name: create uwsgi log directory
   file: path=/var/log/uwsgi state=directory mode=0777 owner=www-data group=www-data
-  sudo: yes
+  become: yes
   when: not apache
 
 - name: create nginx log directory
   file: path=/var/log/nginx state=directory mode=0777 owner=www-data group=www-data
-  sudo: yes
+  become: yes
   when: not apache
 
 - name: make wsgi.py executable
-  sudo: yes
+  become: yes
   file:
     path: "{{app_code_dir}}/{{app_name}}/{{app_name}}/wsgi.py"
     mode: 0755
@@ -151,13 +192,13 @@
                  lc_ctype='en_US.UTF-8'
                  owner={{db_user}}
                  template='template0'
-  sudo: yes
-  sudo_user: postgres
+  become: yes
+  become_user: postgres
 
 - name: add postgis to the {{db_metadata_instance}} db
   postgresql_ext: name=postgis db={{db_metadata_instance}}
-  sudo: yes
-  sudo_user: postgres
+  become: yes
+  become_user: postgres
 
 - name: create {{db_data_instance}} db
   postgresql_db: name={{db_data_instance}}
@@ -166,16 +207,16 @@
                  lc_ctype='en_US.UTF-8'
                  owner={{db_user}}
                  template='template0'
-  sudo: yes
-  sudo_user: postgres
+  become: yes
+  become_user: postgres
 
 - name: add postgis to the {{db_data_instance}} db
   postgresql_ext: name=postgis db={{db_data_instance}}
-  sudo: yes
-  sudo_user: postgres
+  become: yes
+  become_user: postgres
 
 - name: make manage.py executable
-  sudo: yes
+  become: yes
   file:
     path: "{{app_code_dir}}/{{app_name}}/manage.py"
     mode: 0755
@@ -221,10 +262,10 @@
                  settings={{main_module}}.settings
 
 - name: wait for geoserver to be up
-  shell: curl --head --silent http://localhost:8080/geoserver/web/
+  shell: curl --head --silent http://localhost:{{ gs_port }}/geoserver/web/
   register: result
   until: result.stdout.find('200 OK') != -1
-  retries: 5 
+  retries: 5
   delay: 60
 
 - name: Copy create_db_store script in place
@@ -233,11 +274,13 @@
 - name: create the db datastore in geoserver
   command: "{{virtualenv_dir}}/{{app_name}}/bin/python {{app_code_dir}}/{{app_name}}/create_db_store.py"
 
-- name: Copy super user fixture in place
-  template: src=sample_admin.json.j2 dest={{app_code_dir}}/{{app_name}}/sample_admin.json
+- name: template superusers fixture in place
+  template:
+    src: superusers.json.j2
+    dest: "~/superusers.json"
 
-- name: Load super user fixture
-  django_manage: command="loaddata {{app_code_dir}}/{{app_name}}/sample_admin.json"
+- name: load superusers fixture
+  django_manage: command="loaddata ~/superusers.json"
                  app_path={{app_code_dir}}/{{app_name}}
                  virtualenv={{virtualenv_dir}}/{{app_name}}
                  settings={{main_module}}.settings

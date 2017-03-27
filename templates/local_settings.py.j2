@@ -22,16 +22,32 @@ DATABASES = {
     }
 }
 
+GEOSERVER_LOCATION = os.getenv(
+    'GEOSERVER_LOCATION', 'http://localhost:{{ gs_port }}/geoserver/'
+)
+
+GEOSERVER_PUBLIC_LOCATION = os.getenv(
+    'GEOSERVER_PUBLIC_LOCATION', 'http://{{server_name}}/geoserver/'
+)
+
+OGC_SERVER_DEFAULT_USER = os.getenv(
+    'GEOSERVER_ADMIN_USER', '{{ gs_admin_user }}'
+)
+
+OGC_SERVER_DEFAULT_PASSWORD = os.getenv(
+    'GEOSERVER_ADMIN_PASSWORD', '{{ gs_admin_password }}'
+)
+
 # OGC (WMS/WFS/WCS) Server Settings
 OGC_SERVER = {
     'default' : {
         'BACKEND' : 'geonode.geoserver',
-        'LOCATION' : 'http://localhost:8080/geoserver/',
+        'LOCATION' : GEOSERVER_LOCATION,
         'LOGIN_ENDPOINT': 'j_spring_oauth2_geonode_login',
         'LOGOUT_ENDPOINT': 'j_spring_oauth2_geonode_logout',
-        'PUBLIC_LOCATION' : 'http://{{server_name}}/geoserver/',
-        'USER' : 'admin',
-        'PASSWORD' : 'geoserver',
+        'PUBLIC_LOCATION' : GEOSERVER_PUBLIC_LOCATION,
+        'USER' : OGC_SERVER_DEFAULT_USER,
+        'PASSWORD' : OGC_SERVER_DEFAULT_PASSWORD,
         'MAPFISH_PRINT_ENABLED' : True,
         'PRINT_NG_ENABLED' : True,
         'GEONODE_SECURITY_ENABLED' : True,
@@ -54,3 +70,13 @@ CATALOGUE = {
 
 MEDIA_ROOT = "/var/www/{{ app_name }}/uploaded"
 STATIC_ROOT = "/var/www/{{ app_name }}/static"
+
+ALLOWED_HOSTS = ['localhost', '{{ server_name }}']
+
+PASSWORD_HASHERS = [
+    'django.contrib.auth.hashers.BCryptSHA256PasswordHasher',
+    'django.contrib.auth.hashers.BCryptPasswordHasher',
+    'django.contrib.auth.hashers.PBKDF2PasswordHasher',
+    'django.contrib.auth.hashers.PBKDF2SHA1PasswordHasher',
+    'django.contrib.auth.hashers.Argon2PasswordHasher',
+]
