@@ -1,0 +1,4 @@
+User-agent: {{ nginx_robots_txt_useragent }}
+{% for x in nginx_robots_txt_disallow %}
+Disallow: {{ x }}
+{% endfor %}

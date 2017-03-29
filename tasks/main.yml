@@ -1,6 +1,14 @@
 ---
 # Tasks file for geonode
 
+- fail:
+    msg: "gs_admin_user did not pass integrity check"
+  when: not gs_admin_user | valid
+
+- fail:
+    msg: "gs_admin_password did not pass integrity check"
+  when: not gs_admin_password | valid
+
 - include: postgres_postgis.yml
 - include: geoserver.yml
 - include: web.yml

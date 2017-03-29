@@ -4,11 +4,11 @@
 ---
 - name: ensure apt cache is up to date
   apt: update_cache=yes
-  sudo: yes
+  become: yes
 
 - name: ensure needed packages are installed
   apt: name={{item}}
-  sudo: yes
+  become: yes
   with_items:
     - rabbitmq-server
     - python-numpy
@@ -34,11 +34,11 @@
 
 - name: create uploaded/osgeo_importer_uploads directory for Django app if it does not exist
   file: path=/var/www/{{app_name}}/uploaded/osgeo_importer_uploads/ state=directory mode=0777 owner=www-data group=www-data
-  sudo: yes
+  become: yes
 
 - name: create uploaded/osgeo_importer_raster directory for Django app if it does not exist
   file: path=/var/www/{{app_name}}/uploaded/osgeo_importer_raster/ state=directory mode=0777 owner=www-data group=www-data
-  sudo: yes
+  become: yes
 
 - name: add importer configuration to urls.py
   blockinfile:
@@ -107,7 +107,7 @@
       IMPORT_TASK_SOFT_TIME_LIMIT = 90
 
 - name: make manage.py executable
-  sudo: yes
+  become: yes
   file:
     path: "{{app_code_dir}}/{{app_name}}/manage.py"
     mode: 0755

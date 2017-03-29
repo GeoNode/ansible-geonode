@@ -4,20 +4,20 @@
 ---
 # - name: configure the PostgreSQL APT key
 #   apt_key: url=https://www.postgresql.org/media/keys/ACCC4CF8.asc state=present
-#   sudo: yes
+#   become: yes
 
 # - name: configure the PostgreSQL APT repositories
 #   apt_repository: repo="deb http://apt.postgresql.org/pub/repos/apt/ xenial-pgdg main" state=present
-#   sudo: yes
+#   become: yes
 
 - name: configure the UbuntuGIS ppa repository
+  become: yes
   apt_repository:
     repo: 'ppa:ubuntugis/ubuntugis-unstable'
-  sudo: yes
 
 - name: install PostGIS
+  become: yes
   apt: pkg={{ item }} state=present
-  sudo: yes
   with_items:
    - python-psycopg2
    - postgresql-9.5
@@ -26,30 +26,48 @@
 
 
 - name: check if postgres cluster is created already
+  become: yes
+  become_user: postgres
   shell: "psql postgres -c 'select 1'"
   register: db_setup
   ignore_errors: yes
-  sudo: yes
-  sudo_user: postgres
 
 - name: setup postgres cluster to default to utf8
   # if the dbs haven't been created yet, we want to destroy the whole db
   # cluster and recreate it with proper utf8 support. From http://ph.ly/pg
-  sudo: yes
+  become: yes
   shell: "pg_createcluster --start -e UTF-8 9.5 main"
   when: db_setup.rc != 0 # only do this if the dbs haven't been created yet
 
 - name: create database user
+  become: yes
+  become_user: postgres
   postgresql_user: name={{db_user}}
                    password={{db_password}}
                    role_attr_flags=LOGIN,CREATEDB,NOSUPERUSER
-  sudo: yes
-  sudo_user: postgres
 
-- name: write the pg_hba.conf file 
-  template: src=pg_hba.conf dest=/etc/postgresql/9.5/main/pg_hba.conf
-  sudo: yes
+- name: "copy {{ pg_hba_conf }} file"
+  become: yes
+  become_user: postgres
+  copy:
+    src: pg_hba.conf
+    dest: "{{ pg_hba_conf }}"
+
+- name: "patch {{ postgresql_conf }}"
+  become: yes
+  become_user: postgres
+  lineinfile:
+    dest: "{{ postgresql_conf }}"
+    regexp: "{{ item.regexp }}"
+    line: "{{ item.line }}"
+    state: present
+  with_items:
+    - regexp: "^#?max_connections\\s*="
+      line: "max_connections = {{ pg_max_connections }}"
+    - regexp: "^#?shared_buffers\\s*="
+      line: "shared_buffers = {{ pg_shared_buffers }}"
 
 - name: restart postgres
+  become: yes
+  become_user: root
   command: /etc/init.d/postgresql restart
-  sudo: yes

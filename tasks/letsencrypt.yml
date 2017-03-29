@@ -1,0 +1,25 @@
+---
+
+- name: install let's encrypt
+  become: yes
+  become_user: root
+  apt: name=letsencrypt
+
+- name: does /etc/ssl/certs/dhparam.pem exist?
+  become: yes
+  become_user: root
+  stat:
+    path: "/etc/ssl/certs/dhparam.pem"
+  register: dhparam
+
+- name: generate strong diffie-hellman group
+  become: yes
+  become_user: root
+  shell: "openssl dhparam -out /etc/ssl/certs/dhparam.pem 2048"
+  when: dhparam.stat.islnk is not defined
+
+- name: user register domain
+  debug:
+    msg:
+      - "You need to manually register for a let's encrypt certifcate with the following line."
+      - "sudo letsencrypt certonly --webroot -w /var/www/html -d {{ server_name }}"
