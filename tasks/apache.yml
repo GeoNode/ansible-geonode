@@ -4,37 +4,37 @@
 ---
 - name: ensure apt cache is up to date
   apt: update_cache=yes 
-  become: yes
+  sudo: yes
 
 - name: ensure apache packages are installed
   apt: name={{item}}
-  become: yes
+  sudo: yes
   with_items:
     - apache2
     - libapache2-mod-wsgi
 
 - name: write apache configuration
   template: src=geonode.conf.j2 dest=/etc/apache2/sites-available/geonode.conf
-  become: yes
+  sudo: yes
 
 - name: enable proxy apache module
   shell: a2enmod proxy
-  become: yes
+  sudo: yes
   when: apache
 
 - name: enable proxy_http apache module
   shell: a2enmod proxy_http
-  become: yes
+  sudo: yes
   when: apache
 
 - name: enable headers apache module
   shell: a2enmod headers
-  become: yes
+  sudo: yes
   when: apache
 
 - name: enable geonode apache module
   shell: a2ensite geonode
-  become: yes
+  sudo: yes
   when: apache
   notify:
     - restart apache

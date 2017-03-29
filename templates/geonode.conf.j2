@@ -28,8 +28,8 @@ WSGIDaemonProcess geonode user=www-data threads=10 processes=1 python-home={{vir
     </Proxy>
 
     ProxyPreserveHost On
-    ProxyPass /geoserver http://localhost:{{ gs_port }}/geoserver
-    ProxyPassReverse /geoserver http://localhost:{{ gs_port }}/geoserver
+    ProxyPass /geoserver http://localhost:8080/geoserver
+    ProxyPassReverse /geoserver http://localhost:8080/geoserver
     ProxyPass /mapproxy http://localhost:8088
     ProxyPassReverse /mapproxy http://localhost:8088
 
@@ -41,8 +41,8 @@ WSGIDaemonProcess geonode user=www-data threads=10 processes=1 python-home={{vir
     </Location>
 
     <Location /geoserver>
-        ProxyPass http://127.0.0.1:{{ gs_port }}/geoserver
-        ProxyPassReverse http://127.0.0.1:{{ gs_port }}/geoserver
+        ProxyPass http://127.0.0.1:8080/geoserver
+        ProxyPassReverse http://127.0.0.1:8080/geoserver
     </Location>
 
 </VirtualHost>

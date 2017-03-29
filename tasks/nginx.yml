@@ -1,26 +1,17 @@
 ###
-# Installs nginx
+# Installs nginx 
 #
 ---
 - name: ensure apt cache is up to date
-  apt: update_cache=yes
-  become: yes
+  apt: update_cache=yes 
+  sudo: yes
 
 - name: ensure nginx is installed
   apt: name=nginx
-  become: yes
+  sudo: yes
 
-- name: template nginx site configuration
-  become: yes
-  template:
-    src: nginx.conf.j2
-    dest: /etc/nginx/sites-available/default
+- name: write nginx configuration for multiple subdomains
+  template: src=nginx.conf.j2 dest=/etc/nginx/sites-available/default
+  sudo: yes
   notify:
     - restart nginx
-
-- name: template robots.txt
-  become: yes
-  become_user: "www-data"
-  template:
-    src: robots.txt.j2
-    dest: /var/www/html/robots.txt
