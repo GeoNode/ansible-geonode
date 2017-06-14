@@ -73,8 +73,8 @@
        virtualenv={{virtualenv_dir}}/{{app_name}}
   when: github_user == "GeoNode"
 
-- name: checkout latest web app code from geonode-project template
-  shell: cd {{app_code_dir}} && {{virtualenv_dir}}/{{app_name}}/bin/django-admin.py startproject {{app_name}} --template=https://github.com/GeoNode/geonode-project/archive/master.zip -epy,rst,yml -n Vagrantfile
+- name: checkout latest web app code from geonode-project {{branch_name}} branch
+  shell: cd {{app_code_dir}} && {{virtualenv_dir}}/{{app_name}}/bin/django-admin.py startproject {{app_name}} --template=https://github.com/GeoNode/geonode-project/archive/{{branch_name}}.zip -epy,rst,yml -n Vagrantfile
   when: github_user == "GeoNode" and (app_dir.stat.isdir is not defined)
 
 - name: copy the local_settings.py file in place
