@@ -74,7 +74,7 @@
   when: github_user == "GeoNode"
 
 - name: checkout latest web app code from geonode-project {{branch_name}} branch
-  shell: cd {{app_code_dir}} && {{virtualenv_dir}}/{{app_name}}/bin/django-admin.py startproject {{app_name}} --template=https://github.com/GeoNode/geonode-project/archive/{{branch_name}}.zip -epy,rst,yml -n Vagrantfile
+  shell: cd {{app_code_dir}} && {{virtualenv_dir}}/{{app_name}}/bin/django-admin.py startproject {{app_name}} --template=https://github.com/GeoNode/geonode-project/archive/{{branch_name}}.zip -e py,rst,yml -n Vagrantfile
   when: github_user == "GeoNode" and (app_dir.stat.isdir is not defined)
 
 - name: copy the local_settings.py file in place
@@ -189,22 +189,6 @@
                  app_path={{app_code_dir}}/{{app_name}}
                  virtualenv={{virtualenv_dir}}/{{app_name}}
                  settings={{main_module}}.settings
-
-- name: Django migrate specific modules
-  when: github_user == "GeoNode"
-  ignore_errors: yes
-  django_manage: command="migrate {{item}}"
-                 app_path={{app_code_dir}}/{{app_name}}
-                 virtualenv={{virtualenv_dir}}/{{app_name}}
-                 settings={{main_module}}.settings
-  with_items:
-    - auth
-    - account
-    - people
-    - sites
-    - layers
-    - documents
-    - admin
 
 - name: Django migrate
   django_manage: command=migrate
