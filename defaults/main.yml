@@ -5,7 +5,11 @@
 # application name since this variable will be used as a directory name
 # Also, it would be the name of the branch in the worldmap repo. 
 # For example worldmap, my_geonode, master, feature1.
-app_name: my_geonode 
+app_name: my_geonode
+
+# geonode_version should be the geonode version to install
+# if not provided in the requirements file (currently dropped in master)
+geonode_version: 2.6.3
 
 # github user who owns the repository
 # if "geonode" is provided as a github user, this ansible role will create
