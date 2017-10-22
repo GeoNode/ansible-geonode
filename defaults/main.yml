@@ -51,6 +51,23 @@ pg_conf: /etc/postgresql/9.5/main/postgresql.conf
 pg_max_connections: 100
 pg_shared_buffers: 128MB
 
+# Tomcat Variables
+tomcat_xms: "1024M"
+tomcat_xmx: "2048M"
+tomcat_permsize: "512m"
+tomcat_maxpermsize: "1024m"
+
+# GeoServer Variables
+gs_war_url: http://build.geonode.org/geoserver/latest/geoserver-2.9.x-oauth2.war
+gs_data_url: http://build.geonode.org/geoserver/latest/data-2.9.x-oauth2.zip
+#gs_port: 8080
+gs_root_password_old: "M(cqp{V1"
+gs_root_password: "M(cqp{V1"
+gs_admin_user: admin  # used in geonode.yml and geoserver.yml
+gs_admin_password: "geoserver" # used in geonode.yml and geoserver.yml
+gs_users_xml: /var/lib/tomcat8/webapps/geoserver/data/security/usergroup/default/users.xml
+gs_masterpw_xml: "http://localhost:8080/geoserver/rest/security/masterpw.xml"
+
 # Django settings module to use when running Manage commands
 # for example, txt2react.settings
 main_module: "{{ app_name }}"
@@ -75,9 +92,6 @@ requirements_file: "{{app_code_dir}}/requirements.txt"
 #site_url: "{{ app_name }}"
 
 ssh_dir: ~/.ssh/
-
-geoserver_url: http://build.geonode.org/geoserver/latest/geoserver-2.9.x-oauth2.war
-geoserver_data_url: http://build.geonode.org/geoserver/latest/data-2.9.x-oauth2.zip
 
 apache: false
 osgeo_importer: false
