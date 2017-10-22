@@ -244,7 +244,7 @@
   shell: curl --head --silent http://localhost:8080/geoserver/web/
   register: result
   until: result.stdout.find('200 OK') != -1
-  retries: 5 
+  retries: 5
   delay: 60
 
 - name: Copy create_db_store script in place

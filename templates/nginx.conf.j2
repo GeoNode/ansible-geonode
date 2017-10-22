@@ -1,5 +1,9 @@
 server {
-    listen      80;
+    listen {{ nginx_port }} default_server;
+    listen [::]:{{ nginx_port }} default_server;
+
+    root /var/www/html;
+    index index.html index.htm index.nginx-debian.html;
     server_name {{ server_name }};
 
     charset     utf-8;
@@ -7,12 +11,17 @@ server {
     access_log /var/log/nginx/{{ app_name }}.access.log;
     error_log /var/log/nginx/{{ app_name }}.error.log info;
 
-    client_max_body_size 400M;
+    client_max_body_size {{ nginx_client_max_body_size }};
 
     location / {
         root /var/www/{{ app_name }};
         try_files $uri @wsgiapp;
         add_header Access-Control-Allow-Origin "*";
+    }
+
+    location /robots.txt {
+        alias /var/www/html/robots.txt;
+        allow all;
     }
 
     location @wsgiapp {

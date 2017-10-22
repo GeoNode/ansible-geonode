@@ -13,6 +13,7 @@
   with_items:
    - tomcat8
    - unzip
+   - curl
 
 - name: patch tomcat defaults
   become: yes

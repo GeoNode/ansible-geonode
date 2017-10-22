@@ -1,5 +1,5 @@
 ###
-# Installs nginx 
+# Installs nginx
 #
 ---
 - name: ensure apt cache is up to date
@@ -10,8 +10,16 @@
   apt: name=nginx
   become: yes
 
-- name: write nginx configuration for multiple subdomains
-  template: src=nginx.conf.j2 dest=/etc/nginx/sites-available/default
+- name: nginx site configuration
   become: yes
+  template:
+    src: nginx.conf.j2
+    dest: /etc/nginx/sites-available/default
   notify:
     - restart nginx
+
+- name: adding robots.txt
+  become: yes
+  template:
+    src: robots.txt.j2
+    dest: /var/www/html/robots.txt

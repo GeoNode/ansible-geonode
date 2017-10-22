@@ -35,6 +35,13 @@ You can tune PostgreSQL, Tomcat8, and NGINX with the following variables:
 * `pg_shared_buffers` - PostgreSQL Shared Buffers (default: `128MB`)
 * `tomcat_xms` - Tomcat JAVA_OPTS xms (default: `1024M`)
 * `tomcat_xmx` - Tomcat JAVA_OPTS xmx (default: `2048M`)
+* `nginx_client_max_body_size` - NGINX Client Max Body Size (default: `400M`)
+* `uwsgi_processes` - UWSGI number of processes (default: `4`)
+
+The following security variables should be added to `ansible-playbook ...` as command line flags or stored securely outside of `ansible-geonode`, `geonode-project`, or your project repo.
+
+* `gs_admin_password` - GeoServer Admin Password (default: `geoserver`)
+* `gs_root_password` - GeoServer Root Password (default: `M(cqp{V1`)
 
 ## Dependencies
 

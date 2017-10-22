@@ -51,13 +51,13 @@ pg_conf: /etc/postgresql/9.5/main/postgresql.conf
 pg_max_connections: 100
 pg_shared_buffers: 128MB
 
-# Tomcat Variables
+# Tomcat variables
 tomcat_xms: "1024M"
 tomcat_xmx: "2048M"
 tomcat_permsize: "512m"
 tomcat_maxpermsize: "1024m"
 
-# GeoServer Variables
+# GeoServer variables
 gs_war_url: http://build.geonode.org/geoserver/latest/geoserver-2.9.x-oauth2.war
 gs_data_url: http://build.geonode.org/geoserver/latest/data-2.9.x-oauth2.zip
 #gs_port: 8080
@@ -67,6 +67,29 @@ gs_admin_user: admin  # used in geonode.yml and geoserver.yml
 gs_admin_password: "geoserver" # used in geonode.yml and geoserver.yml
 gs_users_xml: /var/lib/tomcat8/webapps/geoserver/data/security/usergroup/default/users.xml
 gs_masterpw_xml: "http://localhost:8080/geoserver/rest/security/masterpw.xml"
+
+# nginx variables
+nginx_port: 80
+nginx_client_max_body_size: 400M
+uwsgi_processes: 4
+nginx_robots_txt_useragent: "*"
+nginx_robots_txt_disallow:
+  - "/admin/"
+  - "/account/"
+  - "/api/"
+  - "/autocomplete/"
+  - "/featured/"
+  - "/geoserver/"
+  - "/groups/"
+  - "/gs/"
+  - "/messages/"
+  - "/people/"
+  - "/proxy/"
+  - "/security/"
+  - "/social/"
+  - "/static/"
+  - "/upload/"
+  - "/uploaded/"
 
 # Django settings module to use when running Manage commands
 # for example, txt2react.settings
