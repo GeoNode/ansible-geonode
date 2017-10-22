@@ -2,9 +2,8 @@
 # defaults file for geonode
 
 # app_name should be a shorthand, lowercase, no spaces version of the
-# application name since this variable will be used as a directory name
-# Also, it would be the name of the branch in the worldmap repo. 
-# For example worldmap, my_geonode, master, feature1.
+# application name. Assumed to be the project folder name and app name.
+# such as: {{ app_name }}/{{ app_name }}/settings.py
 app_name: my_geonode
 
 # geonode_version should be the geonode version to install
@@ -27,7 +26,7 @@ code_repository: "https://github.com/{{ github_user }}/{{ repo_name }}.git"
 branch_name: master
 
 # Server name for nginx.
-server_name: 54.157.187.117 
+server_name: 54.157.187.117
 
 db_data_instance: "{{ app_name }}"
 db_metadata_instance: "{{ app_name }}_app"
@@ -45,6 +44,12 @@ db_maint_window: mon:05:00-mon:06:00
 db_backup_retention: 35
 db_backup_window: 07:00-07:30
 db_license_model: postgresql-license
+
+# Postgres variables
+pg_hba_conf: /etc/postgresql/9.5/main/pg_hba.conf
+pg_conf: /etc/postgresql/9.5/main/postgresql.conf
+pg_max_connections: 100
+pg_shared_buffers: 128MB
 
 # Django settings module to use when running Manage commands
 # for example, txt2react.settings

@@ -46,9 +46,24 @@
   become: yes
   become_user: postgres
 
-- name: write the pg_hba.conf file 
-  template: src=pg_hba.conf dest=/etc/postgresql/9.5/main/pg_hba.conf
+- name: copy pg_hba.conf file
   become: yes
+  copy:
+    src: pg_hba.conf
+    dest: "{{ pg_hba_conf }}"
+
+- name: patch postgresql.conf
+  become: yes
+  lineinfile:
+    dest: "{{ pg_conf }}"
+    regexp: "{{ item.regexp }}"
+    line: "{{ item.line }}"
+    state: present
+  with_items:
+    - regexp: "^#?max_connections\\s*="
+      line: "max_connections = {{ pg_max_connections }}"
+    - regexp: "^#?shared_buffers\\s*="
+      line: "shared_buffers = {{ pg_shared_buffers }}"
 
 - name: restart postgres
   command: /etc/init.d/postgresql restart
