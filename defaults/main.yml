@@ -28,6 +28,25 @@ branch_name: master
 # Server name for nginx.
 server_name: 54.157.187.117
 
+# Django settings module to use when running Manage commands
+# for example, txt2react.settings
+main_module: "{{ app_name }}"
+
+# name of the user created by the Fabric script that Ansible will use to
+# handle server tasks
+deploy_user: ubuntu
+
+# server directory for the virtualenv that will be created to run the web app
+virtualenv_dir: /home/{{deploy_user}}/venvs
+
+# server directory to put the code into that is pulled from the code
+# repository
+app_code_dir: /home/{{deploy_user}}
+
+# location of the requirements.txt flie in the code
+requirements_file: "{{app_code_dir}}/requirements.txt"
+
+# database settings
 db_data_instance: "{{ app_name }}"
 db_metadata_instance: "{{ app_name }}_app"
 db_password: "{{ app_name }}"
@@ -91,23 +110,9 @@ nginx_robots_txt_disallow:
   - "/upload/"
   - "/uploaded/"
 
-# Django settings module to use when running Manage commands
-# for example, txt2react.settings
-main_module: "{{ app_name }}"
-
-# name of the user created by the Fabric script that Ansible will use to
-# handle server tasks
-deploy_user: ubuntu
-
-# server directory for the virtualenv that will be created to run the web app
-virtualenv_dir: /home/{{deploy_user}}/venvs
-
-# server directory to put the code into that is pulled from the code
-# repository
-app_code_dir: /home/{{deploy_user}}
-
-# location of the requirements.txt flie in the code
-requirements_file: "{{app_code_dir}}/requirements.txt"
+# Django variables
+dj_superuser_user: admin
+dj_superuser_password: "admin"
 
 # root domain name the server should run as. do not include a subdomain,
 # for example, txt2react.com

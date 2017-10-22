@@ -67,6 +67,11 @@
        virtualenv={{virtualenv_dir}}/{{app_name}}
        extra_args='-U'
 
+- name: install bcrypt
+  pip:
+    name: "django[bcrypt]"
+    virtualenv: "{{virtualenv_dir}}/{{app_name}}"
+
 - name: install django to initialize the geonode-project template
   pip: name=Django
        version=1.8.7
@@ -253,11 +258,13 @@
 - name: create the db datastore in geoserver
   command: "{{virtualenv_dir}}/{{app_name}}/bin/python {{app_code_dir}}/{{app_name}}/create_db_store.py"
 
-- name: Copy super user fixture in place
-  template: src=sample_admin.json.j2 dest={{app_code_dir}}/{{app_name}}/sample_admin.json
+- name: Copy superusers fixture in place
+  template:
+    src: superusers.json.j2
+    dest: "{{app_code_dir}}/{{app_name}}/superusers.json"
 
-- name: Load super user fixture
-  django_manage: command="loaddata {{app_code_dir}}/{{app_name}}/sample_admin.json"
+- name: Load superusers fixture
+  django_manage: command="loaddata {{app_code_dir}}/{{app_name}}/superusers.json"
                  app_path={{app_code_dir}}/{{app_name}}
                  virtualenv={{virtualenv_dir}}/{{app_name}}
                  settings={{main_module}}.settings

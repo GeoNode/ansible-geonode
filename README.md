@@ -40,10 +40,13 @@ You can tune PostgreSQL, Tomcat8, and NGINX with the following variables:
 
 The following security variables should be added to `ansible-playbook ...` as command line flags or stored securely outside of `ansible-geonode`, `geonode-project`, or your project repo.
 
+* `dj_superuser_password` - GeoNode (Django) Admin Password (default: `admin`)
 * `gs_admin_password` - GeoServer Admin Password (default: `geoserver`)
 * `gs_root_password` - GeoServer Root Password (default: `M(cqp{V1`)
 
 ## Dependencies
+
+Since this playbook has a python module that uses `bcrypt`, the `python-bcrypt` library has to be installed in the system the module runs. Please use your package manager or pip to install this library before using this role.
 
 ## Example Playbook
 
