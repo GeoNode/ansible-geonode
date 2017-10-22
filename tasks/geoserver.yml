@@ -1,28 +1,28 @@
 ###
-# Install GeoServer from Custom GeoNode Build 
+# Install GeoServer from Custom GeoNode Build
 #
 ---
 
 - name: ensure apt cache is up to date
   apt: update_cache=yes
-  sudo: yes
+  become: yes
 
 - name: install Tomcat 
   apt: pkg={{ item }} state=present
-  sudo: yes
+  become: yes
   with_items:
    - tomcat8
    - unzip
 
 - name: increase catalina memory size
-  sudo: yes
+  become: yes
   lineinfile:
     dest: /etc/default/tomcat8
     regexp: '^\s*JAVA_OPTS\s*=.*$'
     line: 'JAVA_OPTS="-Djava.awt.headless=true -Xms1024M -Xmx2096M -XX:MaxPermSize=1024m -XX:PermSize=512m -XX:+UseConcMarkSweepGC"'
 
 - name: download GeoServer (remote)
-  sudo: yes
+  become: yes
   get_url:
     dest=/var/lib/tomcat8/webapps/geoserver.war
     url={{ geoserver_url }}
@@ -36,21 +36,21 @@
 
 ### oAuth setup part
 - name: stopping Tomcat
-  sudo: yes
+  become: yes
   when: geoserver_url == "http://build.geonode.org/geoserver/latest/geoserver-2.9.x-oauth2.war"
   service:
     name: tomcat8
     state: stopped
 
 - name: remove default data folder if oauth2 GeoServer used
-  sudo: yes
+  become: yes
   when: geoserver_url == "http://build.geonode.org/geoserver/latest/geoserver-2.9.x-oauth2.war"
   file:
     path: /var/lib/tomcat8/webapps/geoserver/data
     state: absent
 
 - name: download oauth2 data folder (remote)
-  sudo: yes
+  become: yes
   when: geoserver_url == "http://build.geonode.org/geoserver/latest/geoserver-2.9.x-oauth2.war"
   get_url:
     dest=/var/lib/tomcat8/webapps/geoserver/data.zip
@@ -65,12 +65,12 @@
     path: /var/lib/tomcat8/webapps/geoserver/data.zip
 
 - name: unzip oauth2 data folder
-  sudo: yes
+  become: yes
   when: geoserver_url == "http://build.geonode.org/geoserver/latest/geoserver-2.9.x-oauth2.war"
   shell: "cd /var/lib/tomcat8/webapps/geoserver && unzip data.zip && chown -R tomcat8:tomcat8 data"
 
 - name: remove data.zip
-  sudo: yes
+  become: yes
   when: geoserver_url == "http://build.geonode.org/geoserver/latest/geoserver-2.9.x-oauth2.war"
   file:
     path: /var/lib/tomcat8/webapps/geoserver/data.zip
@@ -82,7 +82,7 @@
   register: logstore_file
 
 - name: adding sqlite logstore setting
-  sudo: yes
+  become: yes
   when: logstore_file.stat.exists
   lineinfile:
     dest: "/var/lib/tomcat8/webapps/geoserver/data/geogig/config/security/logstore.properties"
@@ -96,40 +96,40 @@
   register: geonode_oauth_file
 
 - name: patch the geonode-oauth file (geoserver part)
-  sudo: yes
+  become: yes
   shell: sed -i -e "s|http://localhost:8080|http://{{ server_name }}|g" /var/lib/tomcat8/webapps/geoserver/data/security/filter/geonode-oauth2/config.xml
   when: geonode_oauth_file.stat.exists
 
 - name: patch the geonode-oauth file (geonode part)
-  sudo: yes
+  become: yes
   shell: sed -i -e "s|http://localhost:8000|http://{{ server_name }}|g" /var/lib/tomcat8/webapps/geoserver/data/security/filter/geonode-oauth2/config.xml
   when: geonode_oauth_file.stat.exists
 
 - name: patch the geonode-role file
-  sudo: yes
+  become: yes
   shell: sed -i -e "s|http://localhost:8000|http://{{ server_name }}|g" /var/lib/tomcat8/webapps/geoserver/data/security/role/geonode\ REST\ role\ service/config.xml
   when: geonode_oauth_file.stat.exists
 
 - name: patch the geoserver global config file
-  sudo: yes
+  become: yes
   shell: sed -i -e "s|http://localhost:8080|http://{{ server_name }}|g" /var/lib/tomcat8/webapps/geoserver/data/global.xml
   when: geonode_oauth_file.stat.exists
 
 - name: remove masterpw.info file to remove security risk warning
-  sudo: yes
+  become: yes
   file:
     path: /var/lib/tomcat8/webapps/geoserver/data/security/masterpw.info
     state: absent
 
 - name: set digest password encoding
-  sudo: yes
+  become: yes
   lineinfile:
     dest: /var/lib/tomcat8/webapps/geoserver/data/security/usergroup/default/config.xml
     regexp: '\s*<passwordEncoderName>.*'
     line: '  <passwordEncoderName>digestPasswordEncoder</passwordEncoderName>'
 
 - name: restarting Tomcat
-  sudo: yes
+  become: yes
   service:
     name: tomcat8
     state: restarted

@@ -4,14 +4,14 @@
 ---
 - name: ensure apt cache is up to date
   apt: update_cache=yes 
-  sudo: yes
+  become: yes
 
 - name: ensure nginx is installed
   apt: name=nginx
-  sudo: yes
+  become: yes
 
 - name: write nginx configuration for multiple subdomains
   template: src=nginx.conf.j2 dest=/etc/nginx/sites-available/default
-  sudo: yes
+  become: yes
   notify:
     - restart nginx

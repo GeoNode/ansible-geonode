@@ -49,6 +49,10 @@ The following is an example playbook using variables. This playbook will be incl
         roles:
             - { role: GeoNode.geonode }
 
+Run with:
+
+    ansible-playbook --ask-become-pass ./playbook.yml
+
 License
 -------
 

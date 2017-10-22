@@ -5,17 +5,17 @@
 
 - name: update apt cache
   apt: update_cache=yes
-  sudo: yes
+  become: yes
 
 - name: install uwsgi emperor
   apt: name={{item}}
-  sudo: yes
+  become: yes
   with_items:
     - uwsgi-emperor
     - uwsgi-plugin-python
 
 - name: write default vassals configuration file
   template: src=vassals-default.skel.j2 dest=/etc/uwsgi-emperor/vassals/vassals-default.skel
-  sudo: yes
+  become: yes
   notify:
     - restart uwsgi
