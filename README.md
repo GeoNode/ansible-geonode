@@ -57,6 +57,7 @@ The following is an example playbook using variables. This playbook will be incl
         vars:
             app_name: my_geonode
             github_user: GeoNode
+            branch_name: 2.6
         roles:
             - { role: GeoNode.geonode }
 
