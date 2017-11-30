@@ -3,11 +3,11 @@
 #
 ---
 - name: copy the celery systemd service file in place
-  sudo: yes
+  become: yes
   template: src=celery.service.j2 dest=/lib/systemd/system/celery.service
 
 - name: enable and start celery service
-  sudo: yes
+  become: yes
   service:
     name: celery
     state: started
