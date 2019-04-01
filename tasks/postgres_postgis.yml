@@ -20,9 +20,9 @@
   become: yes
   with_items:
    - python-psycopg2
-   - postgresql-9.5
-   - postgresql-contrib-9.5
-   - postgresql-9.5-postgis-2.3
+   - postgresql-10
+   - postgresql-contrib-10
+   - postgresql-10-postgis-2.5
 
 
 - name: check if postgres cluster is created already
@@ -36,13 +36,14 @@
   # if the dbs haven't been created yet, we want to destroy the whole db
   # cluster and recreate it with proper utf8 support. From http://ph.ly/pg
   become: yes
-  shell: "pg_createcluster --start -e UTF-8 9.5 main"
+  shell: "pg_createcluster --start -e UTF-8 10 main"
   when: db_setup.rc != 0 # only do this if the dbs haven't been created yet
 
 - name: create database user
   postgresql_user: name={{db_user}}
                    password={{db_password}}
                    role_attr_flags=LOGIN,CREATEDB,NOSUPERUSER
+                   encrypted=yes
   become: yes
   become_user: postgres
 
