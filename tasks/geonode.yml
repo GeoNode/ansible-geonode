@@ -18,7 +18,7 @@
     - python-virtualenv
     - postgresql-client-common
     - postgresql-client
-    - python-imaging
+    - python-pil
     - python-lxml
     - python-pyproj
     - python-shapely
@@ -26,7 +26,7 @@
     - python-nose
     - python-httplib2
     - python-psycopg2
-    - python-software-properties
+    - software-properties-common
     - gettext
     - build-essential
     - libxml2-dev
@@ -243,7 +243,7 @@
 - name: wait for geoserver to be up
   shell: curl --head --silent http://localhost:8080/geoserver/web/
   register: result
-  until: result.stdout.find('200 OK') != -1
+  until: result.stdout.find('HTTP/1.1 200') != -1
   retries: 5
   delay: 60
 
@@ -263,6 +263,7 @@
                  settings={{main_module}}.settings
 
 - name: check if oauth configuration exists
+  become: yes
   stat:
     path: /var/lib/tomcat8/webapps/geoserver/data/security/filter/geonode-oauth2/config.xml
   register: geonode_oauth_config
