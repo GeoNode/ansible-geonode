@@ -134,6 +134,11 @@
   when: geonode_version == "2.6.3"
 # FIXME: Remove up to here
 
+- name: patch django to work with recent pyproj
+  become: yes
+  shell: sed -i -e "s/((rc(?P<release_candidate>\d+))|dev)?-CAPI-(?P<capi_version>\d+\.\d+\.\d+)( r\d+)?/((rc(?P<release_candidate>\d+))|dev)?-CAPI-(?P<capi_version>\d+\.\d+\.\d+)( r\d+)?( \w+)?/g" /home/user/venvs/{{app_name}}/local/lib/python2.7/site-packages/django/contrib/gis/geos/libgeos.py
+  when: geonode_version == "2.6.3"
+
 - name: create static directory for Django app if it does not exist
   file: path=/var/www/{{app_name}}/static state=directory mode=0777 owner=www-data group=www-data
   become: yes
