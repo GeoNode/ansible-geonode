@@ -134,9 +134,16 @@
   when: geonode_version == "2.6.3"
 # FIXME: Remove up to here
 
-- name: patch django to work with recent pyproj
+- name: Copy django patch
   become: yes
-  shell: sed -i -e "s/((rc(?P<release_candidate>\d+))|dev)?-CAPI-(?P<capi_version>\d+\.\d+\.\d+)( r\d+)?/((rc(?P<release_candidate>\d+))|dev)?-CAPI-(?P<capi_version>\d+\.\d+\.\d+)( r\d+)?( \w+)?/g" /home/user/venvs/{{app_name}}/local/lib/python2.7/site-packages/django/contrib/gis/geos/libgeos.py
+  copy:
+    src: geos_version.patch
+    dest: "{{virtualenv_dir}}/{{app_name}}/local/lib/python2.7/site-packages/django/contrib/gis/geos/geos_version.patch"
+  when: geonode_version == "2.6.3"
+
+- name: patch the geonode-role file
+  become: yes
+  shell: cd "{{virtualenv_dir}}/{{app_name}}/local/lib/python2.7/site-packages/django/contrib/gis/geos" && patch < geos_version.patch
   when: geonode_version == "2.6.3"
 
 - name: create static directory for Django app if it does not exist
