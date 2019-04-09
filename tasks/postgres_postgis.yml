@@ -16,13 +16,10 @@
   become: yes
 
 - name: install PostGIS
-  apt: pkg={{ item }} state=present
+  apt:
+    pkg: ['python-psycopg2', 'postgresql-10', 'postgresql-contrib-10', 'postgresql-10-postgis-2.5']
+    state: present
   become: yes
-  with_items:
-   - python-psycopg2
-   - postgresql-10
-   - postgresql-contrib-10
-   - postgresql-10-postgis-2.5
 
 
 - name: check if postgres cluster is created already
