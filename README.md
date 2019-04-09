@@ -1,6 +1,6 @@
 # GeoNode Ansible Role
 
-This Ansible Role will install GeoNode and required dependencies onto an Ubuntu 16.04 (Xenial) host. It includes tasks for PostgreSQL+PostGIS, GeoServer, GeoNode, nginx, uswgi and also includes tasks for using AWS RDS databases. It is meant to be used with a GeoNode template project by following the workflow described here http://github.com/geonode/geonode-project
+This Ansible Role will install GeoNode and required dependencies onto an Ubuntu 18.04 (Bionic) host. It includes tasks for PostgreSQL+PostGIS, GeoServer, GeoNode, nginx, uswgi and also includes tasks for using AWS RDS databases. It is meant to be used with a GeoNode template project by following the workflow described here http://github.com/geonode/geonode-project
 
 ## Requirements
 
@@ -27,7 +27,7 @@ The `app_name` variable will be used to set the database names and credentials. 
 
 You can also change the war used to deploy geoserver with the following variable.
 
-* `gs_war_url` - GeoServer war URL (default: `http://build.geonode.org/geoserver/latest/geoserver.war`)
+* `gs_war_url` - GeoServer war URL (default: `https://build.geo-solutions.it/geonode/geoserver/latest/geoserver-2.9.x-oauth2.war`)
 
 You can tune PostgreSQL, Tomcat8, and NGINX with the following variables:
 
@@ -41,7 +41,7 @@ You can tune PostgreSQL, Tomcat8, and NGINX with the following variables:
 The following security variables should be added to `ansible-playbook ...` as command line flags or stored securely outside of `ansible-geonode`, `geonode-project`, or your project repo.
 
 * `gs_admin_password` - GeoServer Admin Password (default: `geoserver`)
-* `gs_root_password` - GeoServer Root Password (default: `M(cqp{V1`)
+* `gs_root_password` - GeoServer Root Password
 
 ## Dependencies
 
