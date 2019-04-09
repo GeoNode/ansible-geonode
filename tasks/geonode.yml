@@ -18,7 +18,7 @@
     - python-virtualenv
     - postgresql-client-common
     - postgresql-client
-    - python-imaging
+    - python-pil
     - python-lxml
     - python-pyproj
     - python-shapely
@@ -26,7 +26,7 @@
     - python-nose
     - python-httplib2
     - python-psycopg2
-    - python-software-properties
+    - software-properties-common
     - gettext
     - build-essential
     - libxml2-dev
@@ -133,6 +133,18 @@
        virtualenv={{virtualenv_dir}}/{{app_name}}
   when: geonode_version == "2.6.3"
 # FIXME: Remove up to here
+
+- name: Copy django patch
+  become: yes
+  copy:
+    src: geos_version.patch
+    dest: "{{virtualenv_dir}}/{{app_name}}/local/lib/python2.7/site-packages/django/contrib/gis/geos/geos_version.patch"
+  when: geonode_version == "2.6.3"
+
+- name: patch the geonode-role file
+  become: yes
+  shell: cd "{{virtualenv_dir}}/{{app_name}}/local/lib/python2.7/site-packages/django/contrib/gis/geos" && patch < geos_version.patch
+  when: geonode_version == "2.6.3"
 
 - name: create static directory for Django app if it does not exist
   file: path=/var/www/{{app_name}}/static state=directory mode=0777 owner=www-data group=www-data
@@ -243,8 +255,8 @@
 - name: wait for geoserver to be up
   shell: curl --head --silent http://localhost:8080/geoserver/web/
   register: result
-  until: result.stdout.find('200 OK') != -1
-  retries: 5 
+  until: result.stdout.find('HTTP/1.1 200') != -1
+  retries: 5
   delay: 60
 
 - name: Copy create_db_store script in place
@@ -263,6 +275,7 @@
                  settings={{main_module}}.settings
 
 - name: check if oauth configuration exists
+  become: yes
   stat:
     path: /var/lib/tomcat8/webapps/geoserver/data/security/filter/geonode-oauth2/config.xml
   register: geonode_oauth_config
