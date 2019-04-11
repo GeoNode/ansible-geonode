@@ -1,0 +1,10 @@
+--- settings.py.orig    2019-04-11 20:47:30.533222059 +0300
++++ settings.py 2019-04-11 20:48:01.348739985 +0300
+@@ -24,6 +24,7 @@
+ from urlparse import urlparse, urlunparse
+ # Load more settings from a file called local_settings.py if it exists
+ try:
++    from geonode.settings import *
+     from my_geonode.local_settings import *
+ #    from geonode.local_settings import *
+ except ImportError:
