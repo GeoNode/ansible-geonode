@@ -92,20 +92,20 @@
     path: /var/lib/tomcat8/webapps/geoserver/data.zip
     state: absent
 
-- name: check if logstore file exists
-  become: yes
-  stat:
-    path: /var/lib/tomcat8/webapps/geoserver/data/geogig/config/security/logstore.properties
-  register: logstore_file
+# - name: check if logstore file exists
+#   become: yes
+#   stat:
+#     path: /var/lib/tomcat8/webapps/geoserver/data/geogig/config/security/logstore.properties
+#   register: logstore_file
 
-- name: adding sqlite logstore setting
-  become: yes
-  when: logstore_file.stat.exists
-  lineinfile:
-    dest: "/var/lib/tomcat8/webapps/geoserver/data/geogig/config/security/logstore.properties"
-    regexp: "^url="
-    line: "url=jdbc:sqlite://var/lib/tomcat8/webapps/geoserver/data/geogig/config/security/securitylogs.db"
-    state: "present"
+# - name: adding sqlite logstore setting
+#   become: yes
+#   when: logstore_file.stat.exists
+#   lineinfile:
+#     dest: "/var/lib/tomcat8/webapps/geoserver/data/geogig/config/security/logstore.properties"
+#     regexp: "^url="
+#     line: "url=jdbc:sqlite://var/lib/tomcat8/webapps/geoserver/data/geogig/config/security/securitylogs.db"
+#     state: "present"
 
 - name: check if geonode-oauth file exists
   become: yes
@@ -133,11 +133,11 @@
   shell: sed -i -e "s|http://localhost:8080|http://{{ server_name }}|g" /var/lib/tomcat8/webapps/geoserver/data/global.xml
   when: geonode_oauth_file.stat.exists
 
-- name: remove masterpw.info file to remove security risk warning
-  become: yes
-  file:
-    path: /var/lib/tomcat8/webapps/geoserver/data/security/masterpw.info
-    state: absent
+# - name: remove masterpw.info file to remove security risk warning
+#   become: yes
+#   file:
+#     path: /var/lib/tomcat8/webapps/geoserver/data/security/masterpw.info
+#     state: absent
 
 - name: copy template users.xml
   become: yes
