@@ -8,38 +8,10 @@
   become: yes
 
 - name: ensure web server packages are installed
-  apt: name={{item}}
+  apt:
+    pkg: ['git', 'python-dev', 'python-pip', 'libpq-dev', 'python-virtualenv', 'postgresql-client-common', 'postgresql-client', 'python-pil', 'python-lxml', 'python-pyproj', 'python-shapely', 'python-gdal', 'python-nose', 'python-httplib2', 'python-psycopg2', 'software-properties-common', 'gettext', 'build-essential', 'libxml2-dev', 'libxslt1-dev', 'zlib1g-dev', 'gdal-bin', 'libgeos-dev', 'libproj-dev', 'unzip', 'zip', 'libjpeg-dev', 'libpng-dev']
+    state: present
   become: yes
-  with_items:
-    - git
-    - python-dev
-    - python-pip
-    - libpq-dev
-    - python-virtualenv
-    - postgresql-client-common
-    - postgresql-client
-    - python-pil
-    - python-lxml
-    - python-pyproj
-    - python-shapely
-    - python-gdal
-    - python-nose
-    - python-httplib2
-    - python-psycopg2
-    - software-properties-common
-    - gettext
-    - build-essential
-    - libxml2-dev
-    - libxslt1-dev
-    - zlib1g-dev
-    - gdal-bin
-    - libgeos-dev
-    - libproj-dev
-    - unzip
-    - zip
-    - libjpeg-dev
-    - libpng-dev
-
 
 - name: install known_hosts file to access GitHub
   copy: src=known_hosts dest={{ssh_dir}}/known_hosts
