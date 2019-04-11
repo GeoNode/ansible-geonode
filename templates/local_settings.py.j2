@@ -54,3 +54,4 @@ CATALOGUE = {
 
 MEDIA_ROOT = "/var/www/{{ app_name }}/uploaded"
 STATIC_ROOT = "/var/www/{{ app_name }}/static"
+ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', ['localhost', '{{ server_name }}'])
