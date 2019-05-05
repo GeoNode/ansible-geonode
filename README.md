@@ -16,7 +16,7 @@ There are three cases to use this project:
 * `repo_name` - GitHub repository name (defaults to `app_name`: `my_geonode`)
 * `code_repository` - URL to the Code Repository (default: `https://github.com/{{ github_user }}/{{ app_name }}.git`)
 * `branch_name` - Git branch to use for deployment (default: `master`)
-* `geonode_version` - GeoNode version to install if this information is not included in the requirements.txt file (default: `2.6.3`)
+* `geonode_version` - GeoNode version to install if this information is not included in the requirements.txt file (default: `2.10rc4`)
 
 The `app_name` variable will be used to set the database names and credentials. You can override this behavior with the following variables.
 

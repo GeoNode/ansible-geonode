@@ -8,38 +8,10 @@
   become: yes
 
 - name: ensure web server packages are installed
-  apt: name={{item}}
+  apt:
+    pkg: ['git', 'python-dev', 'python-pip', 'libpq-dev', 'python-virtualenv', 'postgresql-client-common', 'postgresql-client', 'python-pil', 'python-lxml', 'python-pyproj', 'python-shapely', 'python-gdal', 'python-nose', 'python-httplib2', 'python-psycopg2', 'software-properties-common', 'gettext', 'build-essential', 'libxml2-dev', 'libxslt1-dev', 'zlib1g-dev', 'gdal-bin', 'libgeos-dev', 'libproj-dev', 'unzip', 'zip', 'libjpeg-dev', 'libpng-dev']
+    state: present
   become: yes
-  with_items:
-    - git
-    - python-dev
-    - python-pip
-    - libpq-dev
-    - python-virtualenv
-    - postgresql-client-common
-    - postgresql-client
-    - python-pil
-    - python-lxml
-    - python-pyproj
-    - python-shapely
-    - python-gdal
-    - python-nose
-    - python-httplib2
-    - python-psycopg2
-    - software-properties-common
-    - gettext
-    - build-essential
-    - libxml2-dev
-    - libxslt1-dev
-    - zlib1g-dev
-    - gdal-bin
-    - libgeos-dev
-    - libproj-dev
-    - unzip
-    - zip
-    - libjpeg-dev
-    - libpng-dev
-
 
 - name: install known_hosts file to access GitHub
   copy: src=known_hosts dest={{ssh_dir}}/known_hosts
@@ -69,7 +41,7 @@
 
 - name: install django to initialize the geonode-project template
   pip: name=Django
-       version=1.8.7
+       version=1.11.20
        virtualenv={{virtualenv_dir}}/{{app_name}}
   when: github_user == "GeoNode"
 
@@ -106,45 +78,6 @@
   pip: name=file:///{{app_code_dir}}/{{app_name}}
        virtualenv={{virtualenv_dir}}/{{app_name}}
        extra_args='-e'
-
-# FIXME: Remove the following 4 commands once GeoNode 2.6.4 is released
-- name: Temporary fix to downgrade package transifex-client
-  pip: name=transifex-client
-       version=0.12.5
-       virtualenv={{virtualenv_dir}}/{{app_name}}
-  when: geonode_version == "2.6.3"
-
-- name: Temporary fix to uninstall package python-slugify
-  pip: name=python-slugify
-       state=absent
-       virtualenv={{virtualenv_dir}}/{{app_name}}
-  when: geonode_version == "2.6.3"
-
-- name: Temporary fix to downgrade package django-polymorphic
-  pip: name=django-polymorphic
-       version=1.3
-       virtualenv={{virtualenv_dir}}/{{app_name}}
-  when: geonode_version == "2.6.3"
-
-- name: Temporary fix to install package awesome-slugify
-  pip: name=awesome-slugify
-       version=1.6.5
-       state=forcereinstall
-       virtualenv={{virtualenv_dir}}/{{app_name}}
-  when: geonode_version == "2.6.3"
-# FIXME: Remove up to here
-
-- name: Copy django patch
-  become: yes
-  copy:
-    src: geos_version.patch
-    dest: "{{virtualenv_dir}}/{{app_name}}/local/lib/python2.7/site-packages/django/contrib/gis/geos/geos_version.patch"
-  when: geonode_version == "2.6.3"
-
-- name: patch the geonode-role file
-  become: yes
-  shell: cd "{{virtualenv_dir}}/{{app_name}}/local/lib/python2.7/site-packages/django/contrib/gis/geos" && patch < geos_version.patch
-  when: geonode_version == "2.6.3"
 
 - name: create static directory for Django app if it does not exist
   file: path=/var/www/{{app_name}}/static state=directory mode=0777 owner=www-data group=www-data
@@ -228,6 +161,18 @@
     path: "{{app_code_dir}}/{{app_name}}/manage.py"
     mode: 0755
 
+- name: copy geonode-project settings patch
+  become: yes
+  copy:
+    src: settings.patch
+    dest: "{{app_code_dir}}/{{app_name}}/{{app_name}}/settings.patch"
+  when: github_user == "GeoNode"
+
+- name: patch geonode-project settings file
+  become: yes
+  shell: cd "{{app_code_dir}}/{{app_name}}/{{app_name}}" && patch < settings.patch
+  when: github_user == "GeoNode"
+
 - name: Django makemigrations
   django_manage: command=makemigrations
                  app_path={{app_code_dir}}/{{app_name}}
@@ -236,12 +181,6 @@
 
 - name: Django migrate
   django_manage: command=migrate
-                 app_path={{app_code_dir}}/{{app_name}}
-                 virtualenv={{virtualenv_dir}}/{{app_name}}
-                 settings={{main_module}}.settings
-
-- name: Django syncdb
-  django_manage: command=syncdb
                  app_path={{app_code_dir}}/{{app_name}}
                  virtualenv={{virtualenv_dir}}/{{app_name}}
                  settings={{main_module}}.settings
@@ -259,16 +198,16 @@
   retries: 5
   delay: 60
 
-- name: Copy create_db_store script in place
+- name: copy create_db_store script in place
   template: src=create_db_store.py.j2 dest={{app_code_dir}}/{{app_name}}/create_db_store.py
 
 - name: create the db datastore in geoserver
   command: "{{virtualenv_dir}}/{{app_name}}/bin/python {{app_code_dir}}/{{app_name}}/create_db_store.py"
 
-- name: Copy super user fixture in place
+- name: copy super user fixture in place
   template: src=sample_admin.json.j2 dest={{app_code_dir}}/{{app_name}}/sample_admin.json
 
-- name: Load super user fixture
+- name: load super user fixture
   django_manage: command="loaddata {{app_code_dir}}/{{app_name}}/sample_admin.json"
                  app_path={{app_code_dir}}/{{app_name}}
                  virtualenv={{virtualenv_dir}}/{{app_name}}

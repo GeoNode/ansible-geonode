@@ -7,11 +7,10 @@
   become: yes
 
 - name: ensure apache packages are installed
-  apt: name={{item}}
+  apt:
+    pkg: ['apache2', 'libapache2-mod-wsgi']
+    state: present
   become: yes
-  with_items:
-    - apache2
-    - libapache2-mod-wsgi
 
 - name: write apache configuration
   template: src=geonode.conf.j2 dest=/etc/apache2/sites-available/geonode.conf

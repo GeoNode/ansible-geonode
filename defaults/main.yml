@@ -8,7 +8,7 @@ app_name: my_geonode
 
 # geonode_version should be the geonode version to install
 # if not provided in the requirements file (currently dropped in master)
-geonode_version: 2.6.3
+geonode_version: 2.10rc4
 
 # github user who owns the repository
 # if "geonode" is provided as a github user, this ansible role will create
@@ -58,8 +58,8 @@ tomcat_permsize: "512m"
 tomcat_maxpermsize: "1024m"
 
 # GeoServer variables
-gs_war_url: https://build.geo-solutions.it/geonode/geoserver/latest/geoserver-2.9.x-oauth2.war
-gs_data_url: https://build.geo-solutions.it/geonode/geoserver/latest/data-2.9.x-oauth2.zip
+gs_war_url: https://build.geo-solutions.it/geonode/geoserver/latest/geoserver-2.14.x.war
+gs_data_url: https://build.geo-solutions.it/geonode/geoserver/latest/data-2.14.x.zip
 #gs_port: 8080
 gs_root_password_old: "M(cqp{V1"
 gs_root_password: "M(cqp{V1"

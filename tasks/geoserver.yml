@@ -8,23 +8,20 @@
   become: yes
 
 - name: install openjdk
-  apt: pkg={{ item }} state=present
+  apt:
+    pkg: ['openjdk-8-jdk-headless', 'default-jdk-headless', 'unzip', 'curl']
+    state: present
   become: yes
-  with_items:
-   - openjdk-8-jdk-headless
-   - default-jdk-headless
-   - unzip
-   - curl
 
 - name: change default-java to openjdk8
   become: yes
   shell: rm /usr/lib/jvm/default-java && ln -s /usr/lib/jvm/java-8-openjdk-amd64 /usr/lib/jvm/default-java
 
-- name: install Tomcat
-  apt: pkg={{ item }} state=present
+- name: install tomcat
+  apt:
+    pkg: ['tomcat8']
+    state: present
   become: yes
-  with_items:
-   - tomcat8
 
 - name: patch tomcat defaults
   become: yes
@@ -54,21 +51,21 @@
 ### oAuth setup part
 - name: stopping Tomcat
   become: yes
-  when: gs_war_url == "https://build.geo-solutions.it/geonode/geoserver/latest/geoserver-2.9.x-oauth2.war"
+  when: gs_war_url == "https://build.geo-solutions.it/geonode/geoserver/latest/geoserver-2.14.x.war"
   service:
     name: tomcat8
     state: stopped
 
 - name: remove default data folder if oauth2 GeoServer used
   become: yes
-  when: gs_war_url == "https://build.geo-solutions.it/geonode/geoserver/latest/geoserver-2.9.x-oauth2.war"
+  when: gs_war_url == "https://build.geo-solutions.it/geonode/geoserver/latest/geoserver-2.14.x.war"
   file:
     path: /var/lib/tomcat8/webapps/geoserver/data
     state: absent
 
 - name: download oauth2 data folder (remote)
   become: yes
-  when: gs_war_url == "https://build.geo-solutions.it/geonode/geoserver/latest/geoserver-2.9.x-oauth2.war"
+  when: gs_war_url == "https://build.geo-solutions.it/geonode/geoserver/latest/geoserver-2.14.x.war"
   get_url:
     dest=/var/lib/tomcat8/webapps/geoserver/data.zip
     url={{ gs_data_url }}
@@ -79,36 +76,36 @@
 
 - name: wait for data file to be downloaded
   become: yes
-  when: gs_war_url == "https://build.geo-solutions.it/geonode/geoserver/latest/geoserver-2.9.x-oauth2.war"
+  when: gs_war_url == "https://build.geo-solutions.it/geonode/geoserver/latest/geoserver-2.14.x.war"
   wait_for:
     path: /var/lib/tomcat8/webapps/geoserver/data.zip
 
 - name: unzip oauth2 data folder
   become: yes
-  when: gs_war_url == "https://build.geo-solutions.it/geonode/geoserver/latest/geoserver-2.9.x-oauth2.war"
+  when: gs_war_url == "https://build.geo-solutions.it/geonode/geoserver/latest/geoserver-2.14.x.war"
   shell: "cd /var/lib/tomcat8/webapps/geoserver && unzip data.zip && chown -R tomcat8:tomcat8 data"
 
 - name: remove data.zip
   become: yes
-  when: gs_war_url == "https://build.geo-solutions.it/geonode/geoserver/latest/geoserver-2.9.x-oauth2.war"
+  when: gs_war_url == "https://build.geo-solutions.it/geonode/geoserver/latest/geoserver-2.14.x.war"
   file:
     path: /var/lib/tomcat8/webapps/geoserver/data.zip
     state: absent
 
-- name: check if logstore file exists
-  become: yes
-  stat:
-    path: /var/lib/tomcat8/webapps/geoserver/data/geogig/config/security/logstore.properties
-  register: logstore_file
+# - name: check if logstore file exists
+#   become: yes
+#   stat:
+#     path: /var/lib/tomcat8/webapps/geoserver/data/geogig/config/security/logstore.properties
+#   register: logstore_file
 
-- name: adding sqlite logstore setting
-  become: yes
-  when: logstore_file.stat.exists
-  lineinfile:
-    dest: "/var/lib/tomcat8/webapps/geoserver/data/geogig/config/security/logstore.properties"
-    regexp: "^url="
-    line: "url=jdbc:sqlite://var/lib/tomcat8/webapps/geoserver/data/geogig/config/security/securitylogs.db"
-    state: "present"
+# - name: adding sqlite logstore setting
+#   become: yes
+#   when: logstore_file.stat.exists
+#   lineinfile:
+#     dest: "/var/lib/tomcat8/webapps/geoserver/data/geogig/config/security/logstore.properties"
+#     regexp: "^url="
+#     line: "url=jdbc:sqlite://var/lib/tomcat8/webapps/geoserver/data/geogig/config/security/securitylogs.db"
+#     state: "present"
 
 - name: check if geonode-oauth file exists
   become: yes
@@ -136,11 +133,11 @@
   shell: sed -i -e "s|http://localhost:8080|http://{{ server_name }}|g" /var/lib/tomcat8/webapps/geoserver/data/global.xml
   when: geonode_oauth_file.stat.exists
 
-- name: remove masterpw.info file to remove security risk warning
-  become: yes
-  file:
-    path: /var/lib/tomcat8/webapps/geoserver/data/security/masterpw.info
-    state: absent
+# - name: remove masterpw.info file to remove security risk warning
+#   become: yes
+#   file:
+#     path: /var/lib/tomcat8/webapps/geoserver/data/security/masterpw.info
+#     state: absent
 
 - name: copy template users.xml
   become: yes
