@@ -100,14 +100,14 @@ main_module: "{{ app_name }}"
 deploy_user: ubuntu
 
 # server directory for the virtualenv that will be created to run the web app
-virtualenv_dir: /home/{{deploy_user}}/venvs
+virtualenv_dir: "/home/{{ deploy_user }}/venvs"
 
 # server directory to put the code into that is pulled from the code
 # repository
-app_code_dir: /home/{{deploy_user}}
+app_code_dir: "/home/{{ deploy_user }}"
 
 # location of the requirements.txt flie in the code
-requirements_file: "{{app_code_dir}}/requirements.txt"
+requirements_file: "{{ app_code_dir }}/requirements.txt"
 
 # root domain name the server should run as. do not include a subdomain,
 # for example, txt2react.com
