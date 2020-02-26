@@ -192,9 +192,10 @@
                  settings={{main_module}}.settings
 
 - name: wait for geoserver to be up
-  shell: curl --head --silent http://localhost:8080/geoserver/web/
+  uri:
+    url: http://localhost:8080/geoserver/web/
   register: result
-  until: result.stdout.find('HTTP/1.1 200') != -1
+  until: result.status == 200
   retries: 5
   delay: 60
 
