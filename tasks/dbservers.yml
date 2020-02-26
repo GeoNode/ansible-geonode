@@ -70,9 +70,11 @@
         region: "{{ db_region }}"
       register: postgres_facts_metadata
 
-    - debug: var=postgres_facts_data
+    - debug:
+      var: postgres_facts_data
 
-    - debug: var=postgres_facts_metadata
+    - debug:
+      var: postgres_facts_metadata
 
     - name: Set host name
       set_fact:

@@ -2,16 +2,22 @@
 # handlers file for ansible-geonode
 
 - name: restart nginx
-  service: name=nginx state=restarted
+  service:
+    name: nginx
+    state: restarted
   become: yes
   when: not apache
 
 - name: restart uwsgi
-  service: name=uwsgi-emperor state=restarted
+  service:
+    name: uwsgi-emperor
+    state: restarted
   become: yes
   when: not apache
 
 - name: restart apache
-  service: name=apache2 state=restarted
+  service:
+    name: apache2
+    state: restarted
   become: yes
   when: apache

@@ -4,17 +4,49 @@
 #
 ---
 - name: ensure apt cache is up to date
-  apt: update_cache=yes
+  apt:
+    update_cache: yes
   become: yes
 
 - name: ensure web server packages are installed
   apt:
-    pkg: ['git', 'python-dev', 'python-pip', 'libpq-dev', 'python-virtualenv', 'postgresql-client-common', 'postgresql-client', 'python-pil', 'python-lxml', 'python-pyproj', 'python-shapely', 'python-gdal', 'python-nose', 'python-httplib2', 'python-psycopg2', 'software-properties-common', 'gettext', 'build-essential', 'libxml2-dev', 'libxslt1-dev', 'zlib1g-dev', 'gdal-bin', 'libgeos-dev', 'libproj-dev', 'unzip', 'zip', 'libjpeg-dev', 'libpng-dev']
+    pkg: "{{ item }}"
     state: present
+  loop:
+  - git
+  - python-dev
+  - python-pip
+  - libpq-dev
+  - python-virtualenv
+  - postgresql-client-common
+  - postgresql-client
+  - python-pil
+  - python-lxml
+  - python-pyproj
+  - python-shapely
+  - python-gdal
+  - python-nose
+  - python-httplib2
+  - python-psycopg2
+  - software-properties-common
+  - gettext
+  - build-essential
+  - libxml2-dev
+  - libxslt1-dev
+  - zlib1g-dev
+  - gdal-bin
+  - libgeos-dev
+  - libproj-dev
+  - unzip
+  - zip
+  - libjpeg-dev
+  - libpng-dev
   become: yes
 
-- name: install known_hosts file to access GitHub
-  copy: src=known_hosts dest={{ ssh_dir }}/known_hosts
+- name: install GitHub to known_hosts file
+  known_hosts:
+    name: GitHub
+    key: "{{ lookup('file', 'known_hosts') }}"
 
 - name: check if project template already exists
   stat:
@@ -22,7 +54,10 @@
   register: app_dir
 
 - name: checkout latest web app code
-  git: repo={{ code_repository }} version={{ branch_name }} dest={{ app_code_dir }}/{{ app_name }}
+  git:
+    repo: "{{ code_repository }}"
+    version: "{{ branch_name }}"
+    dest: "{{ app_code_dir }}/{{ app_name }}"
   when: github_user != "GeoNode" and (app_dir.stat.isdir is not defined)
 
 - name: check if virtualenv already exists
@@ -35,14 +70,16 @@
   when: venv_dir.stat.isdir is not defined
 
 - name: update pip in virtualenv to latest version
-  pip: name=pip
-       virtualenv={{ virtualenv_dir }}/{{ app_name }}
-       extra_args='-U'
+  pip:
+    name: pip
+    virtualenv: "{{ virtualenv_dir }}/{{ app_name }}"
+    extra_args: '-U'
 
 - name: install django to initialize the geonode-project template
-  pip: name=Django
-       version=1.11.20
-       virtualenv={{ virtualenv_dir }}/{{ app_name }}
+  pip:
+    name: Django
+    version: 1.11.20
+    virtualenv: "{{ virtualenv_dir }}/{{ app_name }}"
   when: github_user == "GeoNode"
 
 - name: checkout latest web app code from geonode-project {{ branch_name }} branch
@@ -50,7 +87,9 @@
   when: github_user == "GeoNode" and (app_dir.stat.isdir is not defined)
 
 - name: copy the local_settings.py file in place
-  template: src=local_settings.py.j2 dest={{ app_code_dir }}/{{ app_name }}/{{ app_name }}/local_settings.py
+  template:
+    src: local_settings.py.j2
+    dest: "{{ app_code_dir }}/{{ app_name }}/{{ app_name }}/local_settings.py"
 
 - name: patch allowed hosts in settings.py
   shell: sed -i -e "s/ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', \['localhost', \])/ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', \['localhost', '{{ server_name }}'\])/g" {{ app_code_dir }}/{{ app_name }}/{{ app_name }}/settings.py
@@ -61,9 +100,10 @@
   when: github_user != "GeoNode"
 
 - name: install default geonode version {{ geonode_version }}
-  pip: name=geonode
-       version={{ geonode_version }}
-       virtualenv={{ virtualenv_dir }}/{{ app_name }}
+  pip:
+    name: geonode
+    version: "{{ geonode_version }}"
+    virtualenv: "{{ virtualenv_dir }}/{{ app_name }}"
 
 - name: check if requirements file exists
   stat:
@@ -71,50 +111,98 @@
   register: requirements_file
 
 - name: install web application dependencies listed in requirements.txt
-  pip: requirements={{ app_code_dir }}/{{ app_name }}/requirements.txt virtualenv={{ virtualenv_dir }}/{{ app_name }}
+  pip:
+    requirements: "{{ app_code_dir }}/{{ app_name }}/requirements.txt"
+    virtualenv: "{{ virtualenv_dir }}/{{ app_name }}"
   when: requirements_file.stat.exists
 
 - name: install web application
-  pip: name=file:///{{ app_code_dir }}/{{ app_name }}
-       virtualenv={{ virtualenv_dir }}/{{ app_name }}
-       extra_args='-e'
+  pip:
+    name: file:///{{ app_code_dir }}/{{ app_name }}
+    virtualenv: "{{ virtualenv_dir }}/{{ app_name }}"
+    extra_args: '-e'
 
 - name: create static directory for Django app if it does not exist
-  file: path=/var/www/{{ app_name }}/static state=directory mode=0777 owner=www-data group=www-data
+  file:
+    path: "/var/www/{{ app_name }}/static"
+    state: directory
+    mode: '0777'
+    owner: www-data
+    group: www-data
   become: yes
 
 - name: create uploaded directory for Django app if it does not exist
-  file: path=/var/www/{{ app_name }}/uploaded state=directory mode=0777 owner=www-data group=www-data
+  file:
+    path: "/var/www/{{ app_name }}/uploaded"
+    state: directory
+    mode: '0777'
+    owner: www-data
+    group: www-data
   become: yes
 
 - name: create uploaded/layers directory for Django app if it does not exist
-  file: path=/var/www/{{ app_name }}/uploaded/layers/ state=directory mode=0777 owner=www-data group=www-data
+  file:
+    path: "/var/www/{{ app_name }}/uploaded/layers/"
+    state: directory
+    mode: '0777'
+    owner: www-data
+    group: www-data
   become: yes
 
 - name: create uploaded/thumbs directory for Django app if it does not exist
-  file: path=/var/www/{{ app_name }}/uploaded/thumbs/ state=directory mode=0777 owner=www-data group=www-data
+  file:
+    path: "/var/www/{{ app_name }}/uploaded/thumbs/"
+    state: directory
+    mode: '0777'
+    owner: www-data
+    group: www-data
   become: yes
 
 - name: create uploaded/avatars directory for Django app if it does not exist
-  file: path=/var/www/{{ app_name }}/uploaded/avatars/ state=directory mode=0777 owner=www-data group=www-data
+  file:
+    path: "/var/www/{{ app_name }}/uploaded/avatars/"
+    state: directory
+    mode: '0777'
+    owner: www-data
+    group: www-data
   become: yes
 
 - name: create uploaded/documents directory for Django app if it does not exist
-  file: path=/var/www/{{ app_name }}/uploaded/documents/ state=directory mode=0777 owner=www-data group=www-data
+  file:
+    path: "/var/www/{{ app_name }}/uploaded/documents/"
+    state: directory
+    mode: '0777'
+    owner: www-data
+    group: www-data
   become: yes
 
 - name: rename the vassals-default.ini file to the app name
-  file: src=/etc/uwsgi-emperor/vassals/vassals-default.skel dest=/etc/uwsgi-emperor/vassals/{{ app_name }}.ini owner=www-data group=www-data state=link
+  file:
+    src: /etc/uwsgi-emperor/vassals/vassals-default.skel#
+    dest: "/etc/uwsgi-emperor/vassals/{{ app_name }}.ini"
+    owner: www-data
+    group: www-data
+    state: link
   become: yes
   when: not apache
 
 - name: create uwsgi log directory
-  file: path=/var/log/uwsgi state=directory mode=0777 owner=www-data group=www-data
+  file:
+    path: /var/log/uwsgi
+    state: directory
+    mode: '0777'
+    owner: www-data
+    group: www-data
   become: yes
   when: not apache
 
 - name: create nginx log directory
-  file: path=/var/log/nginx state=directory mode=0777 owner=www-data group=www-data
+  file:
+    path: /var/log/nginx
+    state: directory
+    mode: '0777'
+    owner: www-data
+    group: www-data
   become: yes
   when: not apache
 
@@ -122,36 +210,42 @@
   become: yes
   file:
     path: "{{ app_code_dir }}/{{ app_name }}/{{ app_name }}/wsgi.py"
-    mode: 0755
+    mode: '0755'
   when: apache
 
-- name: create {{ db_metadata_instance }} db
-  postgresql_db: name={{ db_metadata_instance }}
-                 encoding='UTF-8'
-                 lc_collate='en_US.UTF-8'
-                 lc_ctype='en_US.UTF-8'
-                 owner={{ db_user }}
-                 template='template0'
+- name: "create {{ db_metadata_instance }} db"
+  postgresql_db:
+    name: "{{ db_metadata_instance }}"
+    encoding: 'UTF-8'
+    lc_collate: 'en_US.UTF-8'
+    lc_ctype: 'en_US.UTF-8'
+    owner: "{{ db_user }}"
+    template: 'template0'
   become: yes
   become_user: postgres
 
 - name: add postgis to the {{ db_metadata_instance }} db
-  postgresql_ext: name=postgis db={{ db_metadata_instance }}
+  postgresql_ext:
+    name: postgis
+    db: "{{ db_metadata_instance }}"
   become: yes
   become_user: postgres
 
-- name: create {{ db_data_instance }} db
-  postgresql_db: name={{ db_data_instance }}
-                 encoding='UTF-8'
-                 lc_collate='en_US.UTF-8'
-                 lc_ctype='en_US.UTF-8'
-                 owner={{ db_user }}
-                 template='template0'
+- name: "create {{ db_data_instance }} db"
+  postgresql_db:
+    name: "{{ db_data_instance }}"
+    encoding: 'UTF-8'
+    lc_collate: 'en_US.UTF-8'
+    lc_ctype: 'en_US.UTF-8'
+    owner: "{{ db_user }}"
+    template: 'template0'
   become: yes
   become_user: postgres
 
-- name: add postgis to the {{ db_data_instance }} db
-  postgresql_ext: name=postgis db={{ db_data_instance }}
+- name: "add postgis to the {{ db_data_instance }} db"
+  postgresql_ext:
+    name: postgis
+    db: "{{ db_data_instance }}"
   become: yes
   become_user: postgres
 
@@ -159,7 +253,7 @@
   become: yes
   file:
     path: "{{ app_code_dir }}/{{ app_name }}/manage.py"
-    mode: 0755
+    mode: '0755'
 
 - name: copy geonode-project settings patch
   become: yes
@@ -174,22 +268,25 @@
   when: github_user == "GeoNode"
 
 - name: Django makemigrations
-  django_manage: command=makemigrations
-                 app_path={{ app_code_dir }}/{{ app_name }}
-                 virtualenv={{ virtualenv_dir }}/{{ app_name }}
-                 settings={{ main_module }}.settings
+  django_manage:
+    command: makemigrations
+    app_path: "{{ app_code_dir }}/{{ app_name }}"
+    virtualenv: "{{ virtualenv_dir }}/{{ app_name }}"
+    settings: "{{ main_module }}.settings"
 
 - name: Django migrate
-  django_manage: command=migrate
-                 app_path={{ app_code_dir }}/{{ app_name }}
-                 virtualenv={{ virtualenv_dir }}/{{ app_name }}
-                 settings={{ main_module }}.settings
+  django_manage:
+    command: migrate
+    app_path: "{{ app_code_dir }}/{{ app_name }}"
+    virtualenv: "{{ virtualenv_dir }}/{{ app_name }}"
+    settings: "{{ main_module }}.settings"
 
 - name: Django collectstatic
-  django_manage: command=collectstatic
-                 app_path={{ app_code_dir }}/{{ app_name }}
-                 virtualenv={{ virtualenv_dir }}/{{ app_name }}
-                 settings={{ main_module }}.settings
+  django_manage:
+    command: collectstatic
+    app_path: "{{ app_code_dir }}/{{ app_name }}"
+    virtualenv: "{{ virtualenv_dir }}/{{ app_name }}"
+    settings: "{{ main_module }}.settings"
 
 - name: wait for geoserver to be up
   shell: curl --head --silent http://localhost:8080/geoserver/web/
@@ -199,19 +296,24 @@
   delay: 60
 
 - name: copy create_db_store script in place
-  template: src=create_db_store.py.j2 dest={{ app_code_dir }}/{{ app_name }}/create_db_store.py
+  template:
+    src: create_db_store.py.j2
+    dest: "{{ app_code_dir }}/{{ app_name }}/create_db_store.py"
 
 - name: create the db datastore in geoserver
   command: "{{ virtualenv_dir }}/{{ app_name }}/bin/python {{ app_code_dir }}/{{ app_name }}/create_db_store.py"
 
 - name: copy super user fixture in place
-  template: src=sample_admin.json.j2 dest={{ app_code_dir }}/{{ app_name }}/sample_admin.json
+  template:
+    src: sample_admin.json.j2
+    dest: "{{ app_code_dir }}/{{ app_name }}/sample_admin.json"
 
 - name: load super user fixture
-  django_manage: command="loaddata {{ app_code_dir }}/{{ app_name }}/sample_admin.json"
-                 app_path={{ app_code_dir }}/{{ app_name }}
-                 virtualenv={{ virtualenv_dir }}/{{ app_name }}
-                 settings={{ main_module }}.settings
+  django_manage:
+    command: "loaddata {{ app_code_dir }}/{{ app_name }}/sample_admin.json"
+    app_path: "{{ app_code_dir }}/{{ app_name }}"
+    virtualenv: "{{ virtualenv_dir }}/{{ app_name }}"
+    settings: "{{ main_module }}.settings"
 
 - name: check if oauth configuration exists
   become: yes
@@ -220,12 +322,15 @@
   register: geonode_oauth_config
 
 - name: Copy oauth fixture in place
-  template: src=default_oauth_apps.json.j2 dest={{ app_code_dir }}/{{ app_name }}/default_oauth_apps.json
+  template:
+    src: default_oauth_apps.json.j2
+    dest: "{{ app_code_dir }}/{{ app_name }}/default_oauth_apps.json"
   when: geonode_oauth_config.stat.exists
 
 - name: Load oAuth fixture
   when: geonode_oauth_config.stat.exists
-  django_manage: command="loaddata {{ app_code_dir }}/{{ app_name }}/default_oauth_apps.json"
-                 app_path={{ app_code_dir }}/{{ app_name }}
-                 virtualenv={{ virtualenv_dir }}/{{ app_name }}
-                 settings={{ main_module }}.settings
+  django_manage:
+    command: "loaddata {{ app_code_dir }}/{{ app_name }}/default_oauth_apps.json"
+    app_path: "{{ app_code_dir }}/{{ app_name }}"
+    virtualenv: "{{ virtualenv_dir }}/{{ app_name }}"
+    settings: "{{ main_module }}.settings"

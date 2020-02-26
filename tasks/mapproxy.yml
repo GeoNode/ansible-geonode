@@ -9,15 +9,26 @@
 
 - name: copy the mapproxy systemd service file in place
   become: yes
-  template: src=mapproxy.service.j2 dest=/lib/systemd/system/mapproxy.service
+  template:
+    src: mapproxy.service.j2
+    dest: /lib/systemd/system/mapproxy.service
 
 - name: create mapproxy configuration folder
-  file: path=/opt/geonode-mapproxy-config/ state=directory mode=0755 owner={{ deploy_user }} group={{ deploy_user }}
+  file:
+    path: /opt/geonode-mapproxy-config/
+    state: directory
+    mode: '0755'
+    owner: "{{ deploy_user }}"
+    group: "{{ deploy_user }}"
   become: yes
 
 - name: copy the mapproxy configuration file
   become: yes
-  template: src=geonode.yaml.j2 dest=/opt/geonode-mapproxy-config/geonode.yaml owner={{ deploy_user }} group={{ deploy_user }}
+  template:
+    src: geonode.yaml.j2
+    dest: /opt/geonode-mapproxy-config/geonode.yaml
+    owner: "{{ deploy_user }}"
+    group: "{{ deploy_user }}"
 
 - name: enable and start mapproxy service
   become: yes
