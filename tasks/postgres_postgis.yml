@@ -1,5 +1,5 @@
 ###
-# Install PostGIS and Postgres 9.5 from the UbuntuGIS repo.
+# Install PostGIS and Postgres 10 from the UbuntuGIS repo.
 #
 ---
 # - name: configure the PostgreSQL APT key
