@@ -37,8 +37,8 @@
   when: db_setup.rc != 0 # only do this if the dbs haven't been created yet
 
 - name: create database user
-  postgresql_user: name={{db_user}}
-                   password={{db_password}}
+  postgresql_user: name={{ db_user }}
+                   password={{ db_password }}
                    role_attr_flags=LOGIN,CREATEDB,NOSUPERUSER
                    encrypted=yes
   become: yes

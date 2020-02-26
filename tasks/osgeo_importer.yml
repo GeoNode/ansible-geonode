@@ -7,7 +7,7 @@
   become: yes
 
 - name: ensure needed packages are installed
-  apt: name={{item}}
+  apt: name={{ item }}
   become: yes
   with_items:
     - rabbitmq-server
@@ -24,20 +24,20 @@
 
 - name: update pip in virtualenv to latest version
   pip: name=pip
-       virtualenv={{virtualenv_dir}}/{{app_name}}
+       virtualenv={{ virtualenv_dir }}/{{ app_name }}
        extra_args='-U'
 
 - name: install django-osgeo-importer
   pip: name=django-osgeo-importer
        version=0.1.1a3
-       virtualenv={{virtualenv_dir}}/{{app_name}}
+       virtualenv={{ virtualenv_dir }}/{{ app_name }}
 
 - name: create uploaded/osgeo_importer_uploads directory for Django app if it does not exist
-  file: path=/var/www/{{app_name}}/uploaded/osgeo_importer_uploads/ state=directory mode=0777 owner=www-data group=www-data
+  file: path=/var/www/{{ app_name }}/uploaded/osgeo_importer_uploads/ state=directory mode=0777 owner=www-data group=www-data
   become: yes
 
 - name: create uploaded/osgeo_importer_raster directory for Django app if it does not exist
-  file: path=/var/www/{{app_name}}/uploaded/osgeo_importer_raster/ state=directory mode=0777 owner=www-data group=www-data
+  file: path=/var/www/{{ app_name }}/uploaded/osgeo_importer_raster/ state=directory mode=0777 owner=www-data group=www-data
   become: yes
 
 - name: add importer configuration to urls.py
@@ -114,6 +114,6 @@
 
 - name: run migrations to include the importer tables
   django_manage: command=migrate
-                 app_path={{app_code_dir}}/{{app_name}}
-                 virtualenv={{virtualenv_dir}}/{{app_name}}
-                 settings={{main_module}}.settings
+                 app_path={{ app_code_dir }}/{{ app_name }}
+                 virtualenv={{ virtualenv_dir }}/{{ app_name }}
+                 settings={{ main_module }}.settings
