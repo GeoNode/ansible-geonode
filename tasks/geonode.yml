@@ -53,11 +53,17 @@
   template: src=local_settings.py.j2 dest={{app_code_dir}}/{{app_name}}/{{app_name}}/local_settings.py
 
 - name: patch allowed hosts in settings.py
-  shell: sed -i -e "s/ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', \['localhost', \])/ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', \['localhost', '{{ server_name }}'\])/g" {{app_code_dir}}/{{app_name}}/{{app_name}}/settings.py
+  replace:
+    path: "{{ app_code_dir }}/{{ app_name }}/{{ app_name }}/settings.py"
+    regexp: "ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', ['localhost', ])"
+    replace: "ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', ['localhost', '{{ server_name }}'])"
   when: github_user != "GeoNode"
 
 - name: patch hostname in settings.py
-  shell: sed -i -e "s/localhost:8080/{{ server_name }}/g" {{app_code_dir}}/{{app_name}}/{{app_name}}/settings.py
+  replace:
+    path: "{{ app_code_dir }}/{{ app_name }}/{{ app_name }}/settings.py"
+    regexp: localhost:8080
+    replace: "{{ server_name }}"
   when: github_user != "GeoNode"
 
 - name: install default geonode version {{geonode_version}}
