@@ -14,8 +14,11 @@
   become: yes
 
 - name: change default-java to openjdk8
+  file:
+    path: /usr/lib/jvm/default-java
+    src: /usr/lib/jvm/java-8-openjdk-amd64
+    state: link
   become: yes
-  shell: rm /usr/lib/jvm/default-java && ln -s /usr/lib/jvm/java-8-openjdk-amd64 /usr/lib/jvm/default-java
 
 - name: install tomcat
   apt:
