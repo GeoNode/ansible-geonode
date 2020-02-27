@@ -178,7 +178,7 @@
 
 - name: rename the vassals-default.ini file to the app name
   file:
-    src: /etc/uwsgi-emperor/vassals/vassals-default.skel#
+    src: /etc/uwsgi-emperor/vassals/vassals-default.skel
     dest: "/etc/uwsgi-emperor/vassals/{{ app_name }}.ini"
     owner: www-data
     group: www-data
