@@ -15,8 +15,11 @@
   become: yes
 
 - name: change default-java to openjdk8
+  file:
+    path: /usr/lib/jvm/default-java
+    src: /usr/lib/jvm/java-8-openjdk-amd64
+    state: link
   become: yes
-  shell: rm /usr/lib/jvm/default-java && ln -s /usr/lib/jvm/java-8-openjdk-amd64 /usr/lib/jvm/default-java
 
 - name: install tomcat
   apt:
@@ -114,24 +117,16 @@
     path: /var/lib/tomcat8/webapps/geoserver/data/security/filter/geonode-oauth2/config.xml
   register: geonode_oauth_file
 
-- name: patch the geonode-oauth file (geoserver part)
+- name: patch the geonode files
+  replace:
+    path: "{{ item }}"
+    regexp: http://localhost:8080
+    replace: http://{{ server_name }}
   become: yes
-  shell: sed -i -e "s|http://localhost:8080|http://{{ server_name }}|g" /var/lib/tomcat8/webapps/geoserver/data/security/filter/geonode-oauth2/config.xml
-  when: geonode_oauth_file.stat.exists
-
-- name: patch the geonode-oauth file (geonode part)
-  become: yes
-  shell: sed -i -e "s|http://localhost:8000|http://{{ server_name }}|g" /var/lib/tomcat8/webapps/geoserver/data/security/filter/geonode-oauth2/config.xml
-  when: geonode_oauth_file.stat.exists
-
-- name: patch the geonode-role file
-  become: yes
-  shell: sed -i -e "s|http://localhost:8000|http://{{ server_name }}|g" /var/lib/tomcat8/webapps/geoserver/data/security/role/geonode\ REST\ role\ service/config.xml
-  when: geonode_oauth_file.stat.exists
-
-- name: patch the geoserver global config file
-  become: yes
-  shell: sed -i -e "s|http://localhost:8080|http://{{ server_name }}|g" /var/lib/tomcat8/webapps/geoserver/data/global.xml
+  loop:
+  - /var/lib/tomcat8/webapps/geoserver/data/security/filter/geonode-oauth2/config.xml
+  - /var/lib/tomcat8/webapps/geoserver/data/security/role/geonode REST role service/config.xml
+  - /var/lib/tomcat8/webapps/geoserver/data/global.xml
   when: geonode_oauth_file.stat.exists
 
 # - name: remove masterpw.info file to remove security risk warning
