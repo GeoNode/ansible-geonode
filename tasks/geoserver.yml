@@ -4,7 +4,8 @@
 ---
 
 - name: ensure apt cache is up to date
-  apt: update_cache=yes
+  apt:
+    update_cache: yes
   become: yes
 
 - name: install openjdk
@@ -39,12 +40,12 @@
 - name: download GeoServer (remote)
   become: yes
   get_url:
-    dest=/var/lib/tomcat8/webapps/geoserver.war
-    url={{ gs_war_url }}
-    owner=0
-    group=0
-    mode=0644
-    validate_certs=false
+    dest: /var/lib/tomcat8/webapps/geoserver.war
+    url: "{{ gs_war_url }}"
+    owner: 0
+    group: 0
+    mode: '0644'
+    validate_certs: false
 
 - name: wait for GeoServer to be unpacked
   become: yes
@@ -70,12 +71,12 @@
   become: yes
   when: gs_war_url == "https://build.geo-solutions.it/geonode/geoserver/latest/geoserver-2.14.x.war"
   get_url:
-    dest=/var/lib/tomcat8/webapps/geoserver/data.zip
-    url={{ gs_data_url }}
-    owner=0
-    group=0
-    mode=0644
-    validate_certs=false
+    dest: /var/lib/tomcat8/webapps/geoserver/data.zip
+    url: "{{ gs_data_url }}"
+    owner: 0
+    group: 0
+    mode: '0644'
+    validate_certs: false
 
 - name: wait for data file to be downloaded
   become: yes

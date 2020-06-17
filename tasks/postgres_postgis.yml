@@ -1,5 +1,5 @@
 ###
-# Install PostGIS and Postgres 9.5 from the UbuntuGIS repo.
+# Install PostGIS and Postgres 10 from the UbuntuGIS repo.
 #
 ---
 # - name: configure the PostgreSQL APT key
@@ -37,10 +37,11 @@
   when: db_setup.rc != 0 # only do this if the dbs haven't been created yet
 
 - name: create database user
-  postgresql_user: name={{db_user}}
-                   password={{db_password}}
-                   role_attr_flags=LOGIN,CREATEDB,NOSUPERUSER
-                   encrypted=yes
+  postgresql_user:
+    name: "{{ db_user }}"
+    password: "{{ db_password }}"
+    role_attr_flags: LOGIN,CREATEDB,NOSUPERUSER
+    encrypted: yes
   become: yes
   become_user: postgres
 

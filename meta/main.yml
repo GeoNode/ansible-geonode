@@ -1,7 +1,7 @@
 ---
 galaxy_info:
-  author: GeoNode Developers 
-  description: An Ansible Role for Installing GeoNode 
+  author: GeoNode Developers
+  description: An Ansible Role for Installing GeoNode
   company: GeoNode Developers
   issue_tracker_url: https://github.com/GeoNode/ansible-geonode/issues
   license: license (Apache)
